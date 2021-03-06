@@ -11,6 +11,12 @@ public class Args {
 
     private String socketUrl;
 
+    /**
+     * Constructor
+     *
+     * @param args
+     * @throws ParseException
+     */
     public Args(String[] args) throws ParseException {
 
         Options options = new Options();
@@ -35,6 +41,7 @@ public class Args {
 
     /**
      * get the parsed websocket URL
+     *
      * @return
      */
     public String getSocketUrl() throws Exception {
@@ -42,7 +49,7 @@ public class Args {
             return socketUrl;
         }
         else {
-            Exception e = new Exception("Invalid or missing web socket address paramter --websocket");
+            Exception e = new IllegalArgumentException("Invalid or missing web socket address paramter --websocket");
             throw e ;
         }
     }
