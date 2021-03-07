@@ -42,19 +42,26 @@
             <version>5.8.0-M1</version>
             <scope>test</scope>
         </dependency>
-<!--
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-websocket</artifactId>
-            <version>5.2.2.RELEASE</version>
-        </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-messaging</artifactId>
-            <version>5.2.2.RELEASE</version>
+            <groupId>com.fasterxml</groupId>
+            <artifactId>jackson-xml-databind</artifactId>
+            <version>0.6.2</version>
         </dependency>
--->
+
+        <!--
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-websocket</artifactId>
+                    <version>5.2.2.RELEASE</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-messaging</artifactId>
+                    <version>5.2.2.RELEASE</version>
+                </dependency>
+        -->
 
     </dependencies>
 
