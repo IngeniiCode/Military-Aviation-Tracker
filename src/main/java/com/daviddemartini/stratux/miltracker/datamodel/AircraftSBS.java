@@ -49,8 +49,8 @@ public class AircraftSBS {
     private int altitude;
     private float speedGround;
     private float track;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
     private int verticalRate;
     private int squawkInt;
     private boolean squawkChanged;
@@ -134,10 +134,10 @@ public class AircraftSBS {
                         this.track = Float.parseFloat(fieldVal);
                         break;
                     case 14:
-                        this.latitude = Float.parseFloat(fieldVal);
+                        this.latitude = Double.parseDouble(fieldVal);
                         break;
                     case 15:
-                        this.longitude = Float.parseFloat(fieldVal);
+                        this.longitude = Double.parseDouble(fieldVal);
                         break;
                     case 16:
                         this.verticalRate = Integer.parseInt(fieldVal);
@@ -239,11 +239,11 @@ public class AircraftSBS {
         return track;
     }
 
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 

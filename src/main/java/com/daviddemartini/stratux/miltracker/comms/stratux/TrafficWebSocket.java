@@ -1,6 +1,5 @@
 package com.daviddemartini.stratux.miltracker.comms.stratux;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;

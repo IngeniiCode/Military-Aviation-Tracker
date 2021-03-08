@@ -7,7 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import com.daviddemartini.stratux.miltracker.util.StringToJson;
 import java.io.IOException;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AircraftSBSTest {
 
@@ -86,7 +87,7 @@ public class AircraftSBSTest {
         assertEquals("258.3",jsonNode.get("track").toString());
         assertEquals("54.05735",jsonNode.get("latitude").toString());
         assertEquals("-4.38826",jsonNode.get("longitude").toString());
-        assertEquals(false,jsonNode.get("onGround").asBoolean());
+        assertFalse(jsonNode.get("onGround").asBoolean());
     }
 
     @DisplayName("AE1E9E - Message 3 Parse Test ")
@@ -112,10 +113,10 @@ public class AircraftSBSTest {
         assertEquals("37000",jsonNode.get("altitude").toString());
         assertEquals("51.45735",jsonNode.get("latitude").toString());
         assertEquals("-1.02826",jsonNode.get("longitude").toString());
-        assertEquals(false,jsonNode.get("squawkChanged").asBoolean());
-        assertEquals(false,jsonNode.get("emergency").asBoolean());
-        assertEquals(false,jsonNode.get("spiIdent").asBoolean());
-        assertEquals(false,jsonNode.get("onGround").asBoolean());
+        assertFalse(jsonNode.get("squawkChanged").asBoolean());
+        assertFalse(jsonNode.get("emergency").asBoolean());
+        assertFalse(jsonNode.get("spiIdent").asBoolean());
+        assertFalse(jsonNode.get("onGround").asBoolean());
     }
 
     @DisplayName("AE1E9E - Message 4 Parse Test ")
@@ -165,9 +166,9 @@ public class AircraftSBSTest {
         assertEquals("17:58:13.368",jsonNode.get("messageLoggedTime").asText());
         // message specific values
         assertEquals("10000",jsonNode.get("altitude").toString());
-        assertEquals(false,jsonNode.get("squawkChanged").asBoolean());
-        assertEquals(true,jsonNode.get("spiIdent").asBoolean());
-        assertEquals(false,jsonNode.get("onGround").asBoolean());
+        assertFalse(jsonNode.get("squawkChanged").asBoolean());
+        assertTrue(jsonNode.get("spiIdent").asBoolean());
+        assertFalse(jsonNode.get("onGround").asBoolean());
     }
 
     @DisplayName("AE1E9E - Message 6 Parse Test ")
@@ -191,10 +192,10 @@ public class AircraftSBSTest {
         assertEquals("17:58:13.368",jsonNode.get("messageLoggedTime").asText());
         // message specific values
         assertEquals("0271",jsonNode.get("squawk").asText());
-        assertEquals(true,jsonNode.get("squawkChanged").asBoolean());
-        assertEquals(true,jsonNode.get("emergency").asBoolean());
-        assertEquals(true,jsonNode.get("spiIdent").asBoolean());
-        assertEquals(true,jsonNode.get("onGround").asBoolean());
+        assertTrue(jsonNode.get("squawkChanged").asBoolean());
+        assertTrue(jsonNode.get("emergency").asBoolean());
+        assertTrue(jsonNode.get("spiIdent").asBoolean());
+        assertTrue(jsonNode.get("onGround").asBoolean());
     }
 
     @DisplayName("AE1E9E - Message 7 Parse Test ")
@@ -218,7 +219,7 @@ public class AircraftSBSTest {
         assertEquals("07:57:37.054",jsonNode.get("messageLoggedTime").asText());
         // message specific values
         assertEquals("3775",jsonNode.get("altitude").toString());
-        assertEquals(false,jsonNode.get("onGround").asBoolean());
+        assertFalse(jsonNode.get("onGround").asBoolean());
     }
 
     @DisplayName("AE1E9E - Message 8 Parse Test ")
@@ -241,7 +242,7 @@ public class AircraftSBSTest {
         assertEquals("2010/02/19",jsonNode.get("messageLoggedDate").asText());
         assertEquals("17:58:13.368",jsonNode.get("messageLoggedTime").asText());
         // message specific values
-        assertEquals(false,jsonNode.get("onGround").asBoolean());
+        assertFalse(jsonNode.get("onGround").asBoolean());
     }
 
     @DisplayName("AE1E9E - Message Merge Test ")
@@ -280,11 +281,11 @@ public class AircraftSBSTest {
         assertEquals("103.2",jsonNode.get("track").toString());
         assertEquals("-832",jsonNode.get("verticalRate").toString());
         assertEquals("0271",jsonNode.get("squawk").asText());
-        assertEquals(true,jsonNode.get("squawkChanged").asBoolean());
-        assertEquals(true,jsonNode.get("emergency").asBoolean());
-        assertEquals(true,jsonNode.get("spiIdent").asBoolean());
+        assertTrue(jsonNode.get("squawkChanged").asBoolean());
+        assertTrue(jsonNode.get("emergency").asBoolean());
+        assertTrue(jsonNode.get("spiIdent").asBoolean());
         assertEquals("3775",jsonNode.get("altitude").toString());
-        assertEquals(false,jsonNode.get("onGround").asBoolean());
+        assertFalse(jsonNode.get("onGround").asBoolean());
     }
 
 
