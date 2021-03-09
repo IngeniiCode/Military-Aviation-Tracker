@@ -16,7 +16,7 @@ public class SBSTrafficSocketTest {
     @DisplayName("Test Websocket Bad URI provided")
     @Test
     void testBadWebsocket_URI() {
-
+        System.out.println("\tWebsocket Bad URI provided");
         Assertions.assertThrows(UnknownHostException.class, () -> {
             SBSTrafficSocket badSocket = new SBSTrafficSocket(BAD_URL);
         });
@@ -26,6 +26,7 @@ public class SBSTrafficSocketTest {
     @DisplayName("Test Websocket Bad URI & port provided")
     @Test
     void testBadWebsocket_URI_and_Port() {
+        System.out.println("\tWebsocket Bad URI & port provided");
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             SBSTrafficSocket badSocket = new SBSTrafficSocket(BAD_URL,BAD_PORT);

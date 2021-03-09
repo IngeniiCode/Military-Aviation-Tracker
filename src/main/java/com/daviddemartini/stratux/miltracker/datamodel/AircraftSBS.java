@@ -63,6 +63,7 @@ public class AircraftSBS {
     // computed values not part of messages
     private float distance;
     private float bearing;
+    private boolean milCallsign;
 
     /**
      * Constructor
@@ -208,6 +209,17 @@ public class AircraftSBS {
         return mapper.writeValueAsString(this);
     }
 
+    public String announceContactTerse(){
+        return String.format("[%s]%s (%s)  %.2fmi @ %.2fº %dft  %.0fkts",
+                getCallsign(),
+                ((isMilCallsign()) ? "-MIL" : "    "),
+                getIcao(),
+                getDistance(),
+                getBearing(),
+                getAltitude(),
+                getSpeedGround());
+    }
+
     /**
      *** SETTERS ***
      */
@@ -217,6 +229,10 @@ public class AircraftSBS {
 
     public void setBearing(float bearing){
         this.bearing = bearing;
+    }
+
+    public void setMilCallsign(boolean milCallsign){
+        this.milCallsign = milCallsign;
     }
 
     /**
@@ -320,6 +336,10 @@ public class AircraftSBS {
 
     public float getBearing(){
         return bearing;
+    }
+
+    public boolean isMilCallsign(){
+        return milCallsign;
     }
 }
 

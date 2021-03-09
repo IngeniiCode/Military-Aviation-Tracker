@@ -38,7 +38,7 @@ public class ArgsTest {
     @DisplayName("Test Argument Parser - Minimum Arguments")
     @Test
     void testArgs_MinimumArguments() throws Exception {
-        System.out.println("Test Argument Parser - Minimum Arguments");
+        System.out.println("\tArgument Parser - Minimum Arguments");
         // setup
         String[] GOOD_WEBSOCKET_ARGS = new String[2];
         GOOD_WEBSOCKET_ARGS[0] = "--host=" + TEST_HOST;
@@ -53,7 +53,7 @@ public class ArgsTest {
     @DisplayName("Test Argument Parser - All Arguments")
     @Test
     void testArgs_AllArguments() throws Exception {
-        System.out.println("Test Argument Parser - Maximum Arguments");
+        System.out.println("\tArgument Parser - Maximum Arguments");
         // setup
         String[] GOOD_WEBSOCKET_ARGS = new String[4];
         GOOD_WEBSOCKET_ARGS[0] = "--host=" + TEST_HOST;

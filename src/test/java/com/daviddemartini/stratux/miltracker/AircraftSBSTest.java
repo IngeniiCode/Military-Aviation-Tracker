@@ -249,7 +249,6 @@ public class AircraftSBSTest {
     void test_AE1E9E_MSG_Merge_AircraftSBS() throws IOException {
         System.out.println("\tAE1E9E - Message Merge Test ");
 
-
         AircraftSBS AE1E9E_SBS = new AircraftSBS(AE1E9E_MSG_1);
         AE1E9E_SBS.merge(AE1E9E_MSG_2);
         AE1E9E_SBS.merge(AE1E9E_MSG_3);
@@ -287,8 +286,22 @@ public class AircraftSBSTest {
         assertFalse(jsonNode.get("onGround").asBoolean());
     }
 
+    @DisplayName("AE1E9E - Contact Announcement Test ")
+    @Test
+    void test_AE1E9E_MSG_Merge_AircraftSBS_Contact_Announcement() throws IOException {
+        System.out.println("\tAE1E9E - Contact Announcement Test ");
 
+        AircraftSBS AE1E9E_SBS = new AircraftSBS(AE1E9E_MSG_1);
+        AE1E9E_SBS.merge(AE1E9E_MSG_2);
+        AE1E9E_SBS.merge(AE1E9E_MSG_3);
+        AE1E9E_SBS.merge(AE1E9E_MSG_4);
+        AE1E9E_SBS.merge(AE1E9E_MSG_5);
+        AE1E9E_SBS.merge(AE1E9E_MSG_6);
+        AE1E9E_SBS.merge(AE1E9E_MSG_7);
+        AE1E9E_SBS.merge(AE1E9E_MSG_8);
 
+        // test announcement
+        System.out.printf("\t\t%s\n",AE1E9E_SBS.announceContactTerse());
 
-
+    }
 }

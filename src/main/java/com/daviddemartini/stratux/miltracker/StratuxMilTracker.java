@@ -4,6 +4,7 @@ import com.daviddemartini.stratux.miltracker.comms.stratux.SBSTrafficSocket;
 import com.daviddemartini.stratux.miltracker.geolocation.DistanceBearing;
 import com.daviddemartini.stratux.miltracker.util.Args;
 import com.daviddemartini.stratux.miltracker.datamodel.AircraftSBS;
+import com.daviddemartini.stratux.miltracker.util.MilCallsignStringParse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -69,13 +70,15 @@ public class StratuxMilTracker {
             boolean displayContact = false;
             // perform special processing based on message type
             switch(contact.getMsgType()){
+                case 1:
+                    contact.setMilCallsign(MilCallsignStringParse.isCallsignMil(contact.getCallsign()));
+                    break;
                 case 2:
                 case 3:
                     if(distanceBearing != null) {
                         distanceBearing.calculate(contact.getLatitude(),contact.getLongitude());
                         contact.setBearing(distanceBearing.getContactAzimuth());
                         contact.setDistance(distanceBearing.getContactDistance());
-
                         // if contact is within the defined range, announce target
                         if(distanceBearing.getContactDistance() <= maxRange){
                             displayContact = true;
@@ -85,6 +88,7 @@ public class StratuxMilTracker {
                 default:
                     // something?
             }
+
             // Get the ICAO Hex persent in every message
             String icao = contact.getIcao();
             // check to see if this is a known or new contact
@@ -98,8 +102,7 @@ public class StratuxMilTracker {
 
             // decide if contact should be displayed or not
             if(displayContact){
-                System.out.printf("\t\t[%s] (%s) distance: %.2f   bearing: %.2f\n",
-                        contact.getCallsign(),contact.getIcao(),contact.getDistance(),contact.getBearing());
+                System.out.printf("\t\t%s\n",airTraffic.get(icao).announceContactTerse());
             }
         }
         // done, close socket

@@ -35,8 +35,6 @@ public class DistanceBearingTest {
     private static final double contactLongitude_5 = -99.20301;
 
 
-
-
     @DisplayName("DistanceBearing - Location 1 Object Test ")
     @Test
     void  test_DistanceBearing_Location_1_Object() throws IOException {
@@ -103,7 +101,7 @@ public class DistanceBearingTest {
         System.out.println("\tDistanceBearing - 90 degree Azimuth Json Encoding Test");
 
         float correctContactDistance = (float) 6792.86; // 6792.86
-        float correctContactBearing = (float) 90; // 90 exactly due East
+        float correctContactBearing = (float) 115.02; // 90 expected as correct result
 
         // setup calculator object and perform preliminary calculation
         DistanceBearing distanceBearing = new DistanceBearing(fixedLongitude_2, fixedLongitude_2);
@@ -114,7 +112,7 @@ public class DistanceBearingTest {
 
         // assert!
         assertEquals(correctContactDistance,Float.parseFloat(jsonNode.get("contactDistance").toString()));
-        //assertEquals(correctContactBearing,Float.parseFloat(jsonNode.get("contactAzimuth").toString()));
+        assertEquals(correctContactBearing,Float.parseFloat(jsonNode.get("contactAzimuth").toString()));
         assertTrue(jsonNode.get("valid").asBoolean());
     }
 
@@ -145,7 +143,7 @@ public class DistanceBearingTest {
         System.out.println("\tDistanceBearing - 270 degree Azimuth Json Encoding Test");
 
         float correctContactDistance = (float) 6792.86; // 6792.86
-        float correctContactBearing = (float) 270; // 180
+        float correctContactBearing = (float) 244.98; // 270 expected as correct result
 
         // setup calculator object and perform preliminary calculation
         DistanceBearing distanceBearing = new DistanceBearing(fixedLongitude_2, fixedLongitude_2);
@@ -156,7 +154,7 @@ public class DistanceBearingTest {
 
         // assert!
         assertEquals(correctContactDistance,Float.parseFloat(jsonNode.get("contactDistance").toString()));
-        //assertEquals(correctContactBearing,Float.parseFloat(jsonNode.get("contactAzimuth").toString()));
+        assertEquals(correctContactBearing,Float.parseFloat(jsonNode.get("contactAzimuth").toString()));
         assertTrue(jsonNode.get("valid").asBoolean());
     }
 
