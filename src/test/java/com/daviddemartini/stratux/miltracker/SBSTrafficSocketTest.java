@@ -1,15 +1,14 @@
 package com.daviddemartini.stratux.miltracker;
-import com.daviddemartini.stratux.miltracker.util.MilCallsignStringParse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import com.daviddemartini.stratux.miltracker.comms.stratux.TrafficWebSocket;
+import com.daviddemartini.stratux.miltracker.comms.stratux.SBSTrafficSocket;
 
 import java.net.UnknownHostException;
 
-public class TrafficWebSocketTest {
+public class SBSTrafficSocketTest {
 
     private static final String BAD_URL = "1.2.3.4/nowhere";
     private static final int BAD_PORT = -9999999;
@@ -19,7 +18,7 @@ public class TrafficWebSocketTest {
     void testBadWebsocket_URI() {
 
         Assertions.assertThrows(UnknownHostException.class, () -> {
-            TrafficWebSocket badSocket = new TrafficWebSocket(BAD_URL);
+            SBSTrafficSocket badSocket = new SBSTrafficSocket(BAD_URL);
         });
 
     }
@@ -29,7 +28,7 @@ public class TrafficWebSocketTest {
     void testBadWebsocket_URI_and_Port() {
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            TrafficWebSocket badSocket = new TrafficWebSocket(BAD_URL,BAD_PORT);
+            SBSTrafficSocket badSocket = new SBSTrafficSocket(BAD_URL,BAD_PORT);
         });
 
     }

@@ -1,6 +1,6 @@
 package com.daviddemartini.stratux.miltracker;
 
-import com.daviddemartini.stratux.miltracker.comms.stratux.TrafficWebSocket;
+import com.daviddemartini.stratux.miltracker.comms.stratux.SBSTrafficSocket;
 import com.daviddemartini.stratux.miltracker.util.Args;
 
 public class StratuxMilTracker {
@@ -10,10 +10,11 @@ public class StratuxMilTracker {
         try {
             // Process args from commandline
             Args clArgs = new Args(args);
-            System.out.println("\tWebsocket = " + clArgs.getSocketUrl());
             // Setup stream reader
-            TrafficWebSocket socket = new TrafficWebSocket(clArgs.getSocketUrl());
+            SBSTrafficSocket sbsTrafficSocket = new SBSTrafficSocket(clArgs.getSocketHost(), clArgs.getSocketPort());
 
+            // basic call to read messages from the port --
+            sbsTrafficSocket.readTraffic();
 
 
         }

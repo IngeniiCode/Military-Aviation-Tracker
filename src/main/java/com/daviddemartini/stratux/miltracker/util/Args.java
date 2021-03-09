@@ -9,7 +9,8 @@ import org.apache.commons.cli.DefaultParser;
 
 public class Args {
 
-    private String socketUrl;
+    private String socketHost;
+    private int socketPort;
 
     /**
      * Constructor
@@ -22,9 +23,15 @@ public class Args {
         Options options = new Options();
 
         // define what optiosn are provided
-        options.addOption(Option.builder("s")
-                .longOpt("websocket")
-                .desc("WebSocket URI")
+        options.addOption(Option.builder("h")
+                .longOpt("host")
+                .desc("Socket hostname")
+                .hasArg()
+                .build());
+
+        options.addOption(Option.builder("p")
+                .longOpt("port")
+                .desc("Socket port")
                 .hasArg()
                 .build());
 
@@ -33,9 +40,13 @@ public class Args {
         CommandLine cmd = new DefaultParser().parse(options,args);
 
         // check for parameters
-        if (cmd.hasOption("websocket")) {
-            socketUrl = String.format("ws://%s",cmd.getOptionValue("websocket"));
+        if (cmd.hasOption("host")) {
+            socketHost = cmd.getOptionValue("host");
         }
+        if (cmd.hasOption("port")) {
+            socketPort = Integer.parseInt(cmd.getOptionValue("port"));
+        }
+
 
     }
 
@@ -44,13 +55,22 @@ public class Args {
      *
      * @return
      */
-    public String getSocketUrl() throws Exception {
-        if(this.socketUrl != null) {
-            return socketUrl;
+    public String getSocketHost() throws Exception {
+        if(this.socketHost != null) {
+            return socketHost;
         }
         else {
-            Exception e = new IllegalArgumentException("Invalid or missing web socket address paramter --websocket");
+            Exception e = new IllegalArgumentException("Invalid or missing socket address/url paramter --url");
             throw e ;
         }
+    }
+
+    /**
+     * Return the socket port
+     *
+     * @return
+     */
+    public int getSocketPort(){
+        return socketPort;
     }
 }

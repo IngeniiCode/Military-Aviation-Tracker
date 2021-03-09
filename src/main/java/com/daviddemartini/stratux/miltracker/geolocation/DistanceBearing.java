@@ -11,67 +11,85 @@ import java.io.IOException;
  */
 public class DistanceBearing {
 
-    private static final int earthRadiusMi = 3963;
+    private final double earthRadiusMi = 3963.0;
     private final double fromLatitude;
     private final double fromLongitude;
-    private final double fromLatitudeRadian;
-    private final double fromLongitudeRadian;
-    private float distanceFromPole;
 
     // exposed data structure
-    public float bearing;
-    public float distance;
+    public float contactAzimuth;
+    public float contactDistance;
     public boolean valid;
 
     /**
      * Constructor
      *
      * The starting (fixed) position from which distance and bearing will
-     * be calcuated (req.
+     * be calculated (req.
      *
-     * @param latitude -- double latitude in degrees (e.g. 29.89401)
-     * @param longitude -- double longitude in degrees (e.g. -98.20301)
+     * @param positionLatitude -- double latitude in degrees (e.g. 29.89401)
+     * @param positionLongitude -- double longitude in degrees (e.g. -98.20301)
      */
-    public DistanceBearing(double latitude, double longitude){
+    public DistanceBearing(double positionLatitude, double positionLongitude){
         // set these values to calculate position from this location
-        this.fromLatitude = latitude;
-        this.fromLongitude = longitude;
-        this.fromLatitudeRadian = Math.toRadians(latitude);
-        this.fromLongitudeRadian = Math.toRadians(longitude);
-        // calculate distance from pole, necessary to complete the bearing calculation
-        this.distanceFromPole = computeDistance(90,0);
+        this.fromLatitude = positionLatitude;
+        this.fromLongitude = positionLongitude;
     }
 
     /**
      * Calculate the distance between the preset location and another
      * location defined by  latitude & longitude expressed in degrees
      *
-     * @param latitude
-     * @param longitude
+     * @param targetLatitude
+     * @param targetLongitude
      */
-    public void calculate(double latitude, double longitude){
-        // compute distance to the location
-        distance = computeDistance(latitude,longitude);
-        // report as valid as long as distance is greater than 0
-        this.valid = (distance > 0);
+    public void calculate(double targetLatitude, double targetLongitude){
+        // compute distance to the location and test for distance > 0
+        this.contactDistance = computeDistance(this.fromLatitude, this.fromLongitude, targetLatitude, targetLongitude);
+        this.contactAzimuth = computeTargetAzimuth(this.fromLatitude, this.fromLongitude, targetLatitude, targetLongitude);
+        this.valid = (this.contactDistance > 0);
     }
 
     /**
      * Compute distance between 2 points using the Great-Circle calculation method
      *
-     * @param latitude
-     * @param longitude
-     * @return
+     * Note: this is a compromise, using flat plane trig instead of a curved triangle
+     * computation due to the expected short trange of these calculations of less than 250mi.
+     *
+     * For any calculations greater than that, this simplified algorithm will become less
+     * accurate as distance increases.
      */
-    private float computeDistance(double latitude, double longitude) {
+    private float computeDistance(double positionLatitude, double positionLongitude, double targetLatitude, double targetLongitude) {
 
         // compute the distance to contact from current position
-        double cosDistance = (Math.sin(this.fromLatitudeRadian) * Math.sin(Math.toRadians(latitude)))
-                + (Math.cos(this.fromLatitudeRadian) * Math.cos(Math.toRadians(latitude))
-                    * Math.cos(Math.toRadians(longitude) - this.fromLongitudeRadian));
+        double cosDistance = (Math.sin(Math.toRadians(positionLatitude)) * Math.sin(Math.toRadians(targetLatitude)))
+                + (Math.cos(Math.toRadians(positionLatitude)) * Math.cos(Math.toRadians(targetLatitude))
+                    * Math.cos(Math.toRadians(targetLongitude) - Math.toRadians(positionLongitude)));
 
         // Calculate the distance between points (compliment poleLongitudeAngle)
-        return (float) Precision.round(((earthRadiusMi * Math.acos(cosDistance)) + 0.5),2);
+        return (float) Precision.round(((this.earthRadiusMi * Math.acos(cosDistance)) + 0.5),2);
+    }
+
+
+    /**
+     * Calculate bearing/angle between two points.
+     *
+     * @param lat1
+     * @param long1
+     * @param lat2
+     * @param long2
+     * @return
+     */
+    private float computeTargetAzimuth(double lat1, double long1, double lat2, double long2) {
+
+        double computedAzimuth = (
+                (Math.toDegrees(
+                        Math.atan2(
+                            Math.sin(long2 - long1) * Math.cos(lat2),
+                                (Math.cos(lat1) * Math.sin(lat2)) - (Math.sin(lat1) * Math.cos(lat2) * Math.cos(long2 - long1))
+                        ))
+                ) + 360) % 360;
+
+        return (float) Precision.round(computedAzimuth,2);
     }
 
     /**
@@ -79,17 +97,8 @@ public class DistanceBearing {
      *
      * @return
      */
-    public float getBearing() {
-        return bearing;
-    }
-
-    /**
-     * Get the distance from North Pole in miles
-     *
-     * @return
-     */
-    public float getDistanceFromPole() {
-        return distanceFromPole;
+    public float getContactAzimuth() {
+        return this.contactAzimuth;
     }
 
     /**
@@ -97,8 +106,8 @@ public class DistanceBearing {
      *
      * @return
      */
-    public float getDistance() {
-        return distance;
+    public float getContactDistance() {
+        return this.contactDistance;
     }
 
     /**
@@ -106,7 +115,7 @@ public class DistanceBearing {
      * @return
      */
     public boolean isValid() {
-        return valid;
+        return this.valid;
     }
 
     /**
