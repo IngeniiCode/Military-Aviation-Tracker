@@ -35,7 +35,6 @@ public class AircraftSBSTest {
         assertEquals("TESTY05",jsonNode.get("callsign").asText());
         assertEquals("A00000",jsonNode.get("icao").asText());
 
-
     }
 
     @DisplayName("AE1E9E - Message 1 Parse Test ")

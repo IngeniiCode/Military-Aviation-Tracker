@@ -9,8 +9,13 @@ import org.apache.commons.cli.DefaultParser;
 
 public class Args {
 
-    private String socketHost;
+    private String socketHost = null;
     private int socketPort;
+    private double positionLatitude;
+    private double positionLongitude;
+    private boolean hasLatitude;
+    private boolean hasLongitude;
+    private double maxRange;
 
     /**
      * Constructor
@@ -35,6 +40,24 @@ public class Args {
                 .hasArg()
                 .build());
 
+        options.addOption(Option.builder("v")
+                .longOpt("lat")
+                .desc("Position Latitude")
+                .hasArg()
+                .build());
+
+        options.addOption(Option.builder("h")
+                .longOpt("lon")
+                .desc("Position Longitude")
+                .hasArg()
+                .build());
+
+        options.addOption(Option.builder("r")
+                .longOpt("range")
+                .desc("Maximum Range to Report Contacts")
+                .hasArg()
+                .build());
+
         // create the parser and the commadline interface
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = new DefaultParser().parse(options,args);
@@ -46,12 +69,22 @@ public class Args {
         if (cmd.hasOption("port")) {
             socketPort = Integer.parseInt(cmd.getOptionValue("port"));
         }
-
+        if (cmd.hasOption("lat")) {
+            hasLatitude = true;
+            positionLatitude = Double.parseDouble(cmd.getOptionValue("lat"));
+        }
+        if (cmd.hasOption("lon")) {
+            hasLongitude = true;
+            positionLongitude = Double.parseDouble(cmd.getOptionValue("lon"));
+        }
+        if (cmd.hasOption("range")) {
+            maxRange = Double.parseDouble(cmd.getOptionValue("range"));
+        }
 
     }
 
     /**
-     * get the parsed websocket URL
+     * get the socket hostname
      *
      * @return
      */
@@ -66,11 +99,47 @@ public class Args {
     }
 
     /**
-     * Return the socket port
+     * get the socket port
      *
      * @return
      */
     public int getSocketPort(){
         return socketPort;
+    }
+
+    /**
+     * get the fixed position Latutude, if known
+     *
+     * @return
+     */
+    public double getPositionLatitude(){
+        return positionLatitude;
+    }
+
+    /**
+     * get the fixed postion Longitude, if known
+     *
+     * @return
+     */
+    public double getPositionLongitude(){
+        return positionLongitude;
+    }
+
+    /**
+     * get max range, if set
+     *
+     * @return
+     */
+    public double getMaxRange(){
+        return maxRange;
+    }
+
+    /**
+     * Boolean test to see if the position values are valid, or NaNs
+     *
+     * @return
+     */
+    public boolean hasPosition(){
+        return (hasLatitude && hasLatitude);
     }
 }

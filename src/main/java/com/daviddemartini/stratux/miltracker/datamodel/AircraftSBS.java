@@ -5,8 +5,11 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Aircraft object is based upon the MSG and other feed data
@@ -57,6 +60,9 @@ public class AircraftSBS {
     private boolean emergency;
     private boolean spiIdent;
     private boolean onGround;
+    // computed values not part of messages
+    private float distance;
+    private float bearing;
 
     /**
      * Constructor
@@ -81,12 +87,31 @@ public class AircraftSBS {
         // parse the message into the fields
         merge(Arrays.asList(message.split(",")));
     }
+    public void merge(AircraftSBS aircraftSBS){
+        // verify objects are the same, otherwise exit
+        assert this.getClass().getName().equals(aircraftSBS.getClass().getName());
+        // iterate the fields and replace when not null
+        for (Field field : this.getClass().getDeclaredFields()) {
+            for (Field newField : aircraftSBS.getClass().getDeclaredFields()) {
+                if (field.getName().equals(newField.getName())) {
+                    try {
+                        field.set(this, newField.get(aircraftSBS) == null ? field.get(this) : newField.get(aircraftSBS));
+                    } catch (IllegalAccessException ignore) {
+                        // Field update exception on final modifier and other cases.
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Merge dump1090 pre-parsed list of fields
      *
      * @param parsedFields - pre-parsed list of Strings
      */
     public void merge(List<String> parsedFields){
+
+        // iterate the parsed fields
         for (int fieldNum = 0; fieldNum < parsedFields.size(); fieldNum++){
             String fieldVal = parsedFields.get(fieldNum).trim();
             if(fieldVal != null && fieldVal.length() > 0) {
@@ -183,6 +208,20 @@ public class AircraftSBS {
         return mapper.writeValueAsString(this);
     }
 
+    /**
+     *** SETTERS ***
+     */
+    public void setDistance(float distance){
+        this.distance = distance;
+    }
+
+    public void setBearing(float bearing){
+        this.bearing = bearing;
+    }
+
+    /**
+     *** GETTERS ***
+     */
     public String getTransmissionType() {
         return transmissionType;
     }
@@ -273,6 +312,14 @@ public class AircraftSBS {
 
     public boolean isOnGround() {
         return onGround;
+    }
+
+    public float getDistance(){
+        return distance;
+    }
+
+    public float getBearing(){
+        return bearing;
     }
 }
 

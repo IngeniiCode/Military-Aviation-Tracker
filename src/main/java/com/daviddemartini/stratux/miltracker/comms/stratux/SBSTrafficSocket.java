@@ -31,8 +31,6 @@ public class SBSTrafficSocket {
         this.URI = URI;
         this.port = port;
         connectSBSSocket();
-
-
     }
 
     /**
