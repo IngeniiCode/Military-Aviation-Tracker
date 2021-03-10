@@ -9,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ArgsTest {
 
@@ -17,7 +19,6 @@ public class ArgsTest {
     private static final double TEST_LAT = 29.91401;
     private static final double TEST_LON = -98.20301;
     private static final String[] BAD_ARGS = StringStuffer.fill(new String[1], "");
-    //private static String[] GOOD_WEBSOCKET_ARGS = new String[4];
 
     @BeforeAll
     static void firstOperations(){
@@ -67,6 +68,24 @@ public class ArgsTest {
         assertEquals(TEST_PORT, clArgs.getSocketPort());
         assertEquals(TEST_LAT, clArgs.getPositionLatitude());
         assertEquals(TEST_LON, clArgs.getPositionLongitude());
+        assertFalse(clArgs.hasMilOnly());
+        assertFalse(clArgs.hasQuiet());
+
+    }
+
+    @DisplayName("Test Argument Parser - Test Flags")
+    @Test
+    void testArgs_MilOnlyArgs() throws Exception {
+        System.out.println("\tAArgument Parser - Test Flags");
+        // setup
+        String[] FLAGS_ONLY_ARGS = new String[2];
+        FLAGS_ONLY_ARGS[0] = "--milonly";
+        FLAGS_ONLY_ARGS[1] = "--quiet";
+
+        // evaluate
+        Args clArgs = new Args(FLAGS_ONLY_ARGS);
+        assertTrue(clArgs.hasMilOnly());
+        assertTrue(clArgs.hasQuiet());
 
     }
 

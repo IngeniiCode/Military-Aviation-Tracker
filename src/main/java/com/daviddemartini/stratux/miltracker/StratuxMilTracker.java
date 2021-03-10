@@ -19,24 +19,33 @@ public class StratuxMilTracker {
     private static DistanceBearing distanceBearing = null;
     private static double fixedPositionLatitude;
     private static double fixedPositionLongitude;
-    private static double maxRange = 5;
+    private static double maxRange = 0; // 0 == unlimited range
+    private static Args clArgs;
 
     public static void main (String[] args){
         // process the CL args..
         try {
             // Process args from commandline
-            Args clArgs = new Args(args);
+            clArgs = new Args(args);
 
             // Setup stream reader
             SBSTrafficSocket sbsTrafficSocket = new SBSTrafficSocket(clArgs.getSocketHost(), clArgs.getSocketPort());
 
             if(clArgs.hasPosition()){
                 maxRange = (clArgs.getMaxRange() > 0) ? clArgs.getMaxRange() : maxRange;
-                System.out.printf("Fixed Position Set.  Only contacts within %.1f miles are displayed\n\n",maxRange);
+                if(!clArgs.hasQuiet()) {
+                    System.out.printf("Fixed Position Set.  Only %scontacts with position %sare displayed\n\n",
+                            (clArgs.hasMilOnly()) ? "Military " : "",
+                            (maxRange > 0) ? String.format("within %.1f miles ",maxRange): ""
+                    );
+                }
                 fixedPositionLatitude = clArgs.getPositionLatitude();
                 fixedPositionLongitude = clArgs.getPositionLongitude();
                 distanceBearing = new DistanceBearing(fixedPositionLatitude,fixedPositionLongitude);
             }
+
+            // setup the publishing ports -- BLOCKING
+            //InRangeFeed rangeFeed = new InRangeFeed(9001);
 
             // process traffic feed from  sbsTrafficSocket
             processMessages(AirTraffic, sbsTrafficSocket);
@@ -44,6 +53,7 @@ public class StratuxMilTracker {
         }
         catch (Exception e) {
             System.err.printf("\n** Fatal Error -- %s\n",e.toString());
+            e.printStackTrace();
             System.exit(9);
         }
 
@@ -65,46 +75,69 @@ public class StratuxMilTracker {
 
         BufferedReader bis = new BufferedReader(new InputStreamReader(sbsTrafficSocket.getSocket().getInputStream()));
         String dump1090Message;
+
         while ((dump1090Message = bis.readLine()) != null) {
             AircraftSBS contact = new AircraftSBS(dump1090Message);
             boolean displayContact = false;
             // perform special processing based on message type
             switch(contact.getMsgType()){
                 case 1:
-                    contact.setMilCallsign(MilCallsignStringParse.isCallsignMil(contact.getCallsign()));
-                    break;
+                    // only message with callsign
                 case 2:
+                    // has ground speed
                 case 3:
                     if(distanceBearing != null) {
                         distanceBearing.calculate(contact.getLatitude(),contact.getLongitude());
                         contact.setBearing(distanceBearing.getContactAzimuth());
                         contact.setDistance(distanceBearing.getContactDistance());
-                        // if contact is within the defined range, announce target
-                        if(distanceBearing.getContactDistance() <= maxRange){
+                        // if contact is within the defined range, set displayContact flag
+                        if(maxRange > 0) {
+                            if(distanceBearing.getContactDistance() <= maxRange){
+                                displayContact = true;
+                            }
+                        }
+                        else {
                             displayContact = true;
                         }
                     }
                     break;
+                case 4:
+                    // has ground speed
+                    break;
+                case 6:
+                    // contains the sqwak code.
                 default:
                     // something?
             }
 
-            // Get the ICAO Hex persent in every message
+            // Get the ICAO Hex present in every message
             String icao = contact.getIcao();
+
             // check to see if this is a known or new contact
             if(airTraffic.containsKey(icao)){
                 airTraffic.get(icao).merge(contact);
             }
             else {
-                System.out.printf("\tNew Contact - '%s'\n",icao);
                 airTraffic.put(icao,contact);
+                // it not operating in quiet mode, announce the new contact
+                if(!clArgs.hasQuiet()) {
+                    System.out.printf("\tNew Contact - '%s'\n", icao);
+                }
             }
 
             // decide if contact should be displayed or not
             if(displayContact){
-                System.out.printf("\t\t%s\n",airTraffic.get(icao).announceContactTerse());
+                if(clArgs.hasMilOnly()){
+                    if(airTraffic.get(icao).isMilCallsign() != null && airTraffic.get(icao).isMilCallsign().booleanValue()){
+                        System.out.printf("\t\t%s\n", airTraffic.get(icao).announceContactTerse());
+                    }
+                }
+                else {
+                    System.out.printf("\t\t%s\n", airTraffic.get(icao).announceContactTerse());
+                }
             }
         }
+
         // done, close socket
         sbsTrafficSocket.getSocket().close();
 

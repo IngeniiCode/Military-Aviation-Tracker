@@ -13,8 +13,10 @@ public class Args {
     private int socketPort;
     private double positionLatitude;
     private double positionLongitude;
-    private boolean hasLatitude;
-    private boolean hasLongitude;
+    private boolean hasLatitude = false;
+    private boolean hasLongitude = false;
+    private boolean milOnly = false;
+    private boolean quiet = false;
     private double maxRange;
 
     /**
@@ -58,6 +60,16 @@ public class Args {
                 .hasArg()
                 .build());
 
+        options.addOption(Option.builder("m")
+                .longOpt("milonly")
+                .desc("Only log military contacts")
+                .build());
+
+        options.addOption(Option.builder("q")
+                .longOpt("quiet")
+                .desc("Quieter operation - do not announce new contacts")
+                .build());
+
         // create the parser and the commadline interface
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = new DefaultParser().parse(options,args);
@@ -79,6 +91,14 @@ public class Args {
         }
         if (cmd.hasOption("range")) {
             maxRange = Double.parseDouble(cmd.getOptionValue("range"));
+        }
+        if (cmd.hasOption("milonly")) {
+            // only announce contacts that exhibit a military like callsign
+            milOnly = true;
+        }
+        if (cmd.hasOption("quiet")) {
+            // don't announce new contacts
+            quiet = true;
         }
 
     }
@@ -141,5 +161,18 @@ public class Args {
      */
     public boolean hasPosition(){
         return (hasLatitude && hasLatitude);
+    }
+
+    /**
+     * Boolean test to see if the display mil only flag has been set.
+     *
+     * @return
+     */
+    public boolean hasMilOnly(){
+        return milOnly;
+    }
+
+    public boolean hasQuiet(){
+        return quiet;
     }
 }

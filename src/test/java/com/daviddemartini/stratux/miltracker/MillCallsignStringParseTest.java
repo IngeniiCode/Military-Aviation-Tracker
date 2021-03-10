@@ -52,8 +52,8 @@ public class MillCallsignStringParseTest {
     void testGetMillCallsignStringParse_Unconventional() {
         System.out.println("\tMil Unconventional Callsign String Parser" );
 
-        // example of a non-callsign flight ID
-        assertTrue(milParse.isCallsignMil("R08885  "));
+        // example of a non-callsign flight ID -- pattern for this was returning false positives.. need better scheme for this in future (dad)
+        //assertTrue(milParse.isCallsignMil("R08885  "));
         // example of a hull registration flight ID
         assertTrue(milParse.isCallsignMil("_08-5691"));
 

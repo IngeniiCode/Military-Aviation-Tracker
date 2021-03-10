@@ -1,6 +1,7 @@
 package com.daviddemartini.stratux.miltracker;
 
 import com.daviddemartini.stratux.miltracker.datamodel.AircraftSBS;
+import com.daviddemartini.stratux.miltracker.util.MilCallsignStringParse;
 import org.codehaus.jackson.JsonNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +21,12 @@ public class AircraftSBSTest {
     private static final String AE1E9E_MSG_6 = "MSG,6,496,237,AE1E9E,27864,2010/02/19,17:58:12.846,2010/02/19,17:58:13.368,,33325,,,,,,0271,1,1,1,1";
     private static final String AE1E9E_MSG_7 = "MSG,7,496,742,AE1E9E,27929,2011/03/06,07:57:36.523,2011/03/06,07:57:37.054,,3775,,,,,,,,,,0";
     private static final String AE1E9E_MSG_8 = "MSG,8,496,194,AE1E9E,27884,2010/02/19,17:58:13.244,2010/02/19,17:58:13.368,,,,,,,,,,,,0";
+
+    private static final String ADFF4B_MSG_1 = "MSG,1,496,256,ADFF4B,11267,2008/11/28,23:48:18.611,2008/11/28,23:53:19.161,BREW46 ,,,,,,,,,,,";
+    private static final String ADFF4B_MSG_2 = "MSG,2,496,603,ADFF4B,13168,2008/10/13,12:24:32.414,2008/10/13,12:28:52.074,,3576,157.6,258.3,54.05735,-4.38826,,,,,,,0";
+    private static final String ADFF4B_MSG_3 = "MSG,3,496,211,ADFF4B,10057,2008/11/28,14:53:50.594,2008/11/28,14:58:51.153,,37000,,,51.45735,-1.02826,,,0,0,0,0";
+    private static final String ADFF4B_MSG_4 = "MSG,4,496,469,ADFF4B,27854,2010/02/19,17:58:13.039,2010/02/19,17:58:13.368,,,543.6,103.2,,,-832,,,,,";
+
 
     @DisplayName("Sparce Test AircraftSBS Object Init")
     @Test
@@ -244,10 +251,10 @@ public class AircraftSBSTest {
         assertFalse(jsonNode.get("onGround").asBoolean());
     }
 
-    @DisplayName("AE1E9E - Message Merge Test ")
+    @DisplayName("AE1E9E - Message Merge Test - Civilian")
     @Test
-    void test_AE1E9E_MSG_Merge_AircraftSBS() throws IOException {
-        System.out.println("\tAE1E9E - Message Merge Test ");
+    void test_AE1E9E_MSG_Merge_Civilian_AircraftSBS() throws IOException {
+        System.out.println("\tAE1E9E - Message Merge Test - Civilian ");
 
         AircraftSBS AE1E9E_SBS = new AircraftSBS(AE1E9E_MSG_1);
         AE1E9E_SBS.merge(AE1E9E_MSG_2);
@@ -260,6 +267,7 @@ public class AircraftSBSTest {
 
         String jsonString = AE1E9E_SBS.toJSON();
         JsonNode jsonNode = StringToJson.parse(jsonString);
+
         // assert!
         assertEquals("MSG",jsonNode.get("transmissionType").asText());
         assertEquals("8",jsonNode.get("msgType").toString());
@@ -284,24 +292,34 @@ public class AircraftSBSTest {
         assertTrue(jsonNode.get("spiIdent").asBoolean());
         assertEquals("3775",jsonNode.get("altitude").toString());
         assertFalse(jsonNode.get("onGround").asBoolean());
+
+        // Display the announce method
+        System.out.println("\tANNC: " + AE1E9E_SBS.announceContactTerse());
+
     }
 
-    @DisplayName("AE1E9E - Contact Announcement Test ")
+    @DisplayName("AE1E9E - Message Merge Test - Military")
     @Test
-    void test_AE1E9E_MSG_Merge_AircraftSBS_Contact_Announcement() throws IOException {
-        System.out.println("\tAE1E9E - Contact Announcement Test ");
+    void test_AE1E9E_MSG_Merge_Military_AircraftSBS() throws IOException {
+        System.out.println("\tAE1E9E - Message Merge Test - Military ");
 
-        AircraftSBS AE1E9E_SBS = new AircraftSBS(AE1E9E_MSG_1);
-        AE1E9E_SBS.merge(AE1E9E_MSG_2);
-        AE1E9E_SBS.merge(AE1E9E_MSG_3);
-        AE1E9E_SBS.merge(AE1E9E_MSG_4);
-        AE1E9E_SBS.merge(AE1E9E_MSG_5);
-        AE1E9E_SBS.merge(AE1E9E_MSG_6);
-        AE1E9E_SBS.merge(AE1E9E_MSG_7);
-        AE1E9E_SBS.merge(AE1E9E_MSG_8);
+        AircraftSBS ADFF4B_SBS = new AircraftSBS(ADFF4B_MSG_1);
+        ADFF4B_SBS.setMilCallsign(MilCallsignStringParse.isCallsignMil(ADFF4B_SBS.getCallsign()));
+        ADFF4B_SBS.merge(ADFF4B_MSG_2);
+        ADFF4B_SBS.merge(ADFF4B_MSG_3);
+        ADFF4B_SBS.merge(ADFF4B_MSG_4);
 
-        // test announcement
-        System.out.printf("\t\t%s\n",AE1E9E_SBS.announceContactTerse());
+        String jsonString = ADFF4B_SBS.toJSON();
+        JsonNode jsonNode = StringToJson.parse(jsonString);
+
+        assertEquals("MSG",jsonNode.get("transmissionType").asText());
+        assertEquals("ADFF4B",jsonNode.get("icao").asText());
+        // message specific values
+        assertEquals("BREW46",jsonNode.get("callsign").asText());
+        assertEquals("543.6",jsonNode.get("speedGround").toString());
+        assertTrue(ADFF4B_SBS.isMilCallsign());
 
     }
+
+
 }

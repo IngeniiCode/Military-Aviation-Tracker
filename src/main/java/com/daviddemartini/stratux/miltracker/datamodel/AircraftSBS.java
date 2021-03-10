@@ -7,9 +7,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import com.daviddemartini.stratux.miltracker.util.MilCallsignStringParse;
 
 /**
  * Aircraft object is based upon the MSG and other feed data
@@ -50,20 +52,20 @@ public class AircraftSBS {
     // the following fields are not expected part of every message, and contain aircraft details
     private String callsign;
     private int altitude;
-    private float speedGround;
+    private Float speedGround;
     private float track;
     private double latitude;
     private double longitude;
     private int verticalRate;
     private int squawkInt;
-    private boolean squawkChanged;
-    private boolean emergency;
-    private boolean spiIdent;
-    private boolean onGround;
+    private Boolean squawkChanged;
+    private Boolean emergency;
+    private Boolean spiIdent;
+    private Boolean onGround;
     // computed values not part of messages
-    private float distance;
-    private float bearing;
-    private boolean milCallsign;
+    private Float distance;
+    private Float bearing;
+    private Boolean milCallsign;
 
     /**
      * Constructor
@@ -98,7 +100,7 @@ public class AircraftSBS {
                     try {
                         field.set(this, newField.get(aircraftSBS) == null ? field.get(this) : newField.get(aircraftSBS));
                     } catch (IllegalAccessException ignore) {
-                        // Field update exception on final modifier and other cases.
+                        //ignore.printStackTrace();
                     }
                 }
             }
@@ -115,7 +117,7 @@ public class AircraftSBS {
         // iterate the parsed fields
         for (int fieldNum = 0; fieldNum < parsedFields.size(); fieldNum++){
             String fieldVal = parsedFields.get(fieldNum).trim();
-            if(fieldVal != null && fieldVal.length() > 0) {
+            if(fieldVal != null && !fieldVal.trim().isEmpty()) {
                 switch (fieldNum) {
                     case 0:
                         this.transmissionType = fieldVal;
@@ -149,12 +151,15 @@ public class AircraftSBS {
                         break;
                     case 10:
                         this.callsign = fieldVal;
+                        if (MilCallsignStringParse.isCallsignMil(this.callsign)){
+                            milCallsign = true;
+                        }
                         break;
                     case 11:
                         this.altitude = Integer.parseInt(fieldVal);
                         break;
                     case 12:
-                        this.speedGround = Float.parseFloat(fieldVal);
+                        this.speedGround = Float.parseFloat(fieldVal.trim());
                         break;
                     case 13:
                         this.track = Float.parseFloat(fieldVal);
@@ -210,14 +215,15 @@ public class AircraftSBS {
     }
 
     public String announceContactTerse(){
-        return String.format("[%s]%s (%s)  %.2fmi @ %.2fº %dft  %.0fkts",
+        return String.format("%8s%6s(%s)  %.2fmi @ %.2fsº  %,dft  %.0fkts",
                 getCallsign(),
-                ((isMilCallsign()) ? "-MIL" : "    "),
+                ((this.milCallsign != null && this.milCallsign.booleanValue()) ? " +MIL+ " : ""),
                 getIcao(),
                 getDistance(),
                 getBearing(),
                 getAltitude(),
-                getSpeedGround());
+                getSpeedGround()
+        );
     }
 
     /**
@@ -286,7 +292,7 @@ public class AircraftSBS {
         return altitude;
     }
 
-    public float getSpeedGround() {
+    public Float getSpeedGround() {
         return speedGround;
     }
 
@@ -314,32 +320,36 @@ public class AircraftSBS {
         return String.format("%04d",squawkInt);
     }
 
-    public boolean isSquawkChanged() {
+    public Boolean isSquawkChanged() {
         return squawkChanged;
     }
 
-    public boolean isEmergency() {
+    public Boolean isEmergency() {
         return emergency;
     }
 
-    public boolean isSpiIdent() {
+    public Boolean isSpiIdent() {
         return spiIdent;
     }
 
-    public boolean isOnGround() {
+    public Boolean isOnGround() {
         return onGround;
     }
 
-    public float getDistance(){
+    public Float getDistance(){
         return distance;
     }
 
-    public float getBearing(){
+    public Float getBearing(){
         return bearing;
     }
 
-    public boolean isMilCallsign(){
+    public Boolean isMilCallsign(){
         return milCallsign;
+    }
+
+    public boolean milContactTrue(){
+        return (this.milCallsign != null && this.milCallsign.booleanValue());
     }
 }
 
