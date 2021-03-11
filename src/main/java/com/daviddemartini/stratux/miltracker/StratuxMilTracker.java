@@ -1,6 +1,9 @@
 package com.daviddemartini.stratux.miltracker;
 
+import com.daviddemartini.stratux.miltracker.comms.stratux.InRangeFeed;
+import com.daviddemartini.stratux.miltracker.comms.stratux.MilContactFeed;
 import com.daviddemartini.stratux.miltracker.comms.stratux.NewContactFeed;
+import com.daviddemartini.stratux.miltracker.comms.stratux.InRangeMilContactFeed;
 import com.daviddemartini.stratux.miltracker.comms.stratux.SBSTrafficSocket;
 import com.daviddemartini.stratux.miltracker.datamodel.AircraftSBS;
 import com.daviddemartini.stratux.miltracker.geolocation.DistanceBearing;
@@ -22,6 +25,9 @@ public class StratuxMilTracker {
     private static double maxRange = 0; // 0 == unlimited range
     private static Args clArgs;
     private static NewContactFeed PubNewContact;
+    private static MilContactFeed PubMilContact;
+    private static InRangeFeed PubInRangeContact;
+    private static InRangeMilContactFeed PubMilInRangeContact;
 
     public static void main(String[] args) {
         // process the CL args..
@@ -46,9 +52,12 @@ public class StratuxMilTracker {
             }
 
             // setup the publishing ports
-            System.out.println("Starting New Feed Publisher");
+
+            System.out.println("Starting Feed Publishers");
             PubNewContact = new NewContactFeed(9101);
-            System.out.println("New Feed Publisher Running");
+            PubInRangeContact = new InRangeFeed(9102);
+            PubMilContact = new MilContactFeed(9103);
+            PubMilInRangeContact = new InRangeMilContactFeed(9104);
 
             // process traffic feed from  sbsTrafficSocket
             processMessages(AirTraffic, sbsTrafficSocket);
@@ -64,7 +73,7 @@ public class StratuxMilTracker {
 
     /**
      * Read simple text message strings from the port connection stream
-     * 
+     *
      * Parse into object, check ICAO to see if it had been seen before, and if not, add to in-mem dataset, otherwise
      * merge messages into a unified model -- at some point the model would be complete enough to express a position,
      * callsign and bearing.
@@ -81,7 +90,8 @@ public class StratuxMilTracker {
         while ((dump1090Message = bis.readLine()) != null) {
 
             // init flag to determine writes to <STDOUT>
-            boolean displayContact = false;
+            boolean publishContact = false;
+            boolean publishInRageContact = false;
 
             // convert the CSV message string into an AircraftSBS message object
             AircraftSBS contact = new AircraftSBS(dump1090Message);
@@ -101,11 +111,10 @@ public class StratuxMilTracker {
                         // if contact is within the defined range, set displayContact flag
                         if (maxRange > 0) {
                             if (distanceBearing.getContactDistance() <= maxRange) {
-                                displayContact = true;
+                                publishInRageContact = true;
                             }
-                        } else {
-                            displayContact = true;
                         }
+                        publishContact = true;
                     }
                     break;
                 case 4:
@@ -122,7 +131,7 @@ public class StratuxMilTracker {
 
             // don't announce anything that doesn't yet have a callsign, it's just not interesting
             if (contact.getCallsign() != null) {
-                displayContact = false;
+                publishContact = false;
             }
 
             // Get the ICAO Hex present in every message
@@ -142,14 +151,21 @@ public class StratuxMilTracker {
             }
 
             // decide if contact should be displayed or not
-            if (displayContact) {
-                if (clArgs.hasMilOnly()) {
-                    if (airTraffic.get(icao).isMilCallsign() != null && airTraffic.get(icao).isMilCallsign().booleanValue()) {
+            if (publishContact) {
+                if (airTraffic.get(icao).isMilCallsign() != null && airTraffic.get(icao).isMilCallsign().booleanValue()) {
+                    PubMilContact.publishContact(airTraffic.get(icao));
+                    if(publishInRageContact) {
+                        PubMilInRangeContact.publishContact(airTraffic.get(icao));
+                    }
+                    if (clArgs.hasMilOnly()) {
                         System.out.printf("\t\t%s\n", airTraffic.get(icao).announceContactTerse());
                     }
-                } else {
-                    System.out.printf("\t\t%s\n", airTraffic.get(icao).announceContactTerse());
                 }
+                if(publishInRageContact){
+                    PubInRangeContact.publishContact(airTraffic.get(icao));
+                }
+            } else {
+                System.out.printf("\t\t%s\n", airTraffic.get(icao).announceContactTerse());
             }
         }
 
@@ -157,4 +173,5 @@ public class StratuxMilTracker {
         sbsTrafficSocket.getSocket().close();
 
     }
+
 }

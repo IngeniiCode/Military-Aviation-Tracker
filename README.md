@@ -91,4 +91,9 @@ The following publishing ports are planned.
 | 07-MAR-2021 | d.demartini | added simple caching repository to store new AircraftSBS data objects |
 | 08-MAR-2021 | d.demartini | implemented range and bearing formulas (arched triangle calculations) | 
 | 10-MAR-2021 | d.demartini | extended function with --milonly and --quiet features | 
+| 11-MAR-2021 | d.demartini | Added New Contact Json feed on port 9101 |
+| 11-MAR-2021 | d.demartini | Added new Military Contact Json feed on port 9103 |
+| 11-MAR-2021 | d.demartini | Added new In-Range (aka fly-by) Contact Json feed on port 9102 |
+| 11-MAR-2021 | d.demartini | Added new In-Range (aka fly-by) Military Contact Json feed on port 9104 |
+
 
