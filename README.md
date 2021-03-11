@@ -71,6 +71,17 @@ or update the AircraftSBS data model.
     SPAR99 +MIL+ (AE0978)  9.27mi @ 182.08sº  7,650ft  261kts
 
 
+## Planned Publishing Ports
+The following publishing ports are planned.
+
+|Service Name|Port|Description|
+|--- |--- |--- |
+|New Contacts | 9101 | Json data - with new ICAO  detected |
+|Nearby Contact (in range X) | 9102 | Json data – contact w/ range, bearing, altitude and speed within a defined range (ex.  only contacts within 5 miles) |
+|Military Style Contacts | 9103 | Json data – contacts w/ range, bearing, altitude, speed & mil flag |
+|Military Style (in range X) | 9104 | Json data – contacts w/ range, bearing, altitude, speed & mil flag within a defined range (ex.  only contacts within 5 miles) |
+
+
 ## Change Log
 | Updated | Author | Comments |
 | --- | --- |--- |
