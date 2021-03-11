@@ -1,8 +1,7 @@
 package com.daviddemartini.stratux.miltracker.datamodel;
 
-
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -50,6 +49,7 @@ public class AircraftSBS {
     private String messageLoggedDate;
     private String messageLoggedTime;
     // the following fields are not expected part of every message, and contain aircraft details
+
     private String callsign;
     private int altitude;
     private Float speedGround;
@@ -214,6 +214,21 @@ public class AircraftSBS {
         return mapper.writeValueAsString(this);
     }
 
+    // JsonInclude.Include.NON_NULL
+    public String toJSONLite() throws IOException {
+        // convert this data object to JSON
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+        return mapper.writeValueAsString(this);
+    }
+
+
+    /**
+     * Terse logging message
+     *
+     * Intended for use during development, announce terse contact data.
+     * @return
+     */
     public String announceContactTerse(){
         return String.format("%8s%6s(%s)  %.2fmi @ %.2fsº  %,dft  %.0fkts",
                 getCallsign(),

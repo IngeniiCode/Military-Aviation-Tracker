@@ -1,10 +1,10 @@
 package com.daviddemartini.stratux.miltracker;
 
+import com.daviddemartini.stratux.miltracker.comms.stratux.NewContactFeed;
 import com.daviddemartini.stratux.miltracker.comms.stratux.SBSTrafficSocket;
 import com.daviddemartini.stratux.miltracker.geolocation.DistanceBearing;
 import com.daviddemartini.stratux.miltracker.util.Args;
 import com.daviddemartini.stratux.miltracker.datamodel.AircraftSBS;
-import com.daviddemartini.stratux.miltracker.util.MilCallsignStringParse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,6 +21,7 @@ public class StratuxMilTracker {
     private static double fixedPositionLongitude;
     private static double maxRange = 0; // 0 == unlimited range
     private static Args clArgs;
+    private static NewContactFeed PubNewContact;
 
     public static void main (String[] args){
         // process the CL args..
@@ -44,8 +45,8 @@ public class StratuxMilTracker {
                 distanceBearing = new DistanceBearing(fixedPositionLatitude,fixedPositionLongitude);
             }
 
-            // setup the publishing ports -- BLOCKING
-            //InRangeFeed rangeFeed = new InRangeFeed(9001);
+            // setup the publishing ports
+            PubNewContact = new NewContactFeed();
 
             // process traffic feed from  sbsTrafficSocket
             processMessages(AirTraffic, sbsTrafficSocket);
@@ -77,12 +78,18 @@ public class StratuxMilTracker {
         String dump1090Message;
 
         while ((dump1090Message = bis.readLine()) != null) {
-            AircraftSBS contact = new AircraftSBS(dump1090Message);
+
+            // init flag to determine writes to <STDOUT>
             boolean displayContact = false;
+
+            // convert the CSV message string into an AircraftSBS message object
+            AircraftSBS contact = new AircraftSBS(dump1090Message);
+
             // perform special processing based on message type
             switch(contact.getMsgType()){
                 case 1:
                     // only message with callsign
+                    break;
                 case 2:
                     // has ground speed
                 case 3:
@@ -106,8 +113,16 @@ public class StratuxMilTracker {
                     break;
                 case 6:
                     // contains the sqwak code.
+                    break;
+                case 7:
+                case 8:
                 default:
-                    // something?
+                    // TBD
+            }
+
+            // don't announce anything that doesn't yet have a callsign, it's just not interesting
+            if(contact.getCallsign() != null){
+                displayContact = false;
             }
 
             // Get the ICAO Hex present in every message
@@ -122,6 +137,7 @@ public class StratuxMilTracker {
                 // it not operating in quiet mode, announce the new contact
                 if(!clArgs.hasQuiet()) {
                     System.out.printf("\tNew Contact - '%s'\n", icao);
+                    //PubNewContact.publish(contact);
                 }
             }
 

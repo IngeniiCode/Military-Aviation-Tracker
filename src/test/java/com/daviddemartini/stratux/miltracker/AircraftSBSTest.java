@@ -2,11 +2,11 @@ package com.daviddemartini.stratux.miltracker;
 
 import com.daviddemartini.stratux.miltracker.datamodel.AircraftSBS;
 import com.daviddemartini.stratux.miltracker.util.MilCallsignStringParse;
-import org.codehaus.jackson.JsonNode;
-import org.junit.jupiter.api.Assertions;
+import com.daviddemartini.stratux.miltracker.util.StringToJson;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import com.daviddemartini.stratux.miltracker.util.StringToJson;
+
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;

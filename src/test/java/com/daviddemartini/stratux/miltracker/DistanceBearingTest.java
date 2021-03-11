@@ -3,7 +3,7 @@ package com.daviddemartini.stratux.miltracker;
 import com.daviddemartini.stratux.miltracker.geolocation.DistanceBearing;
 
 import com.daviddemartini.stratux.miltracker.util.StringToJson;
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,5 +1,7 @@
 package com.daviddemartini.stratux.miltracker.comms.stratux;
 
+import com.daviddemartini.stratux.miltracker.datamodel.AircraftSBS;
+
 import java.io.IOException;
 
 public class NewContactFeed {
@@ -22,6 +24,17 @@ public class NewContactFeed {
     }
     public NewContactFeed() throws IOException {
         new InRangeMilContactFeed(feedSocketPort);
+    }
+
+    public void publish(AircraftSBS contact){
+        // express new contact in JSON with any known data.
+        try {
+            System.out.println("NEW CONTACT:\t" + contact.toJSONLite());
+        }
+        catch (Exception e) {
+            System.err.println("NEW CONTACT ERROR");
+            e.printStackTrace();
+        }
     }
 
 
