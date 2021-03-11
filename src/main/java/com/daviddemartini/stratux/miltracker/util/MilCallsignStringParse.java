@@ -11,13 +11,14 @@ public class MilCallsignStringParse {
 
     /**
      * Parse the callsign string to see if it matches an expected military callsign.
+     *
      * @param input
      * @return
      */
-    public static String parseMessageCSV(String input){
+    public static String parseMessageCSV(String input) {
         // parse string based on a computed regex
         Matcher callsign = msgCallsignPattern.matcher(input);
-        if (callsign.find( )) {
+        if (callsign.find()) {
             return input;
         }
         return null;
@@ -25,17 +26,16 @@ public class MilCallsignStringParse {
 
     /**
      * Perform a basic callsign pattern test for possible Mil Aircraft
+     *
      * @param callsign
      * @return
      */
-    public static boolean isCallsignMil(String callsign){
-        if(callsign != null) {
+    public static boolean isCallsignMil(String callsign) {
+        if (callsign != null) {
             if (callsignMilPatternVerbose.matcher(callsign).find()) {
                 return true;
             }
-            if (callsignMilPatternHull.matcher(callsign).find()) {
-                return true;
-            }
+            return callsignMilPatternHull.matcher(callsign).find();
         }
         return false;
     }

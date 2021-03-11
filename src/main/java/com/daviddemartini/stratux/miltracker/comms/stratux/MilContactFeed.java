@@ -20,6 +20,7 @@ public class MilContactFeed {
         this.feedSocketPort = port;
 
     }
+
     public MilContactFeed() throws IOException {
         new InRangeMilContactFeed(feedSocketPort);
     }

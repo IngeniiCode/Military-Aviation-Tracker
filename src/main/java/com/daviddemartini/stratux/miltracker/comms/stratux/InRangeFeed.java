@@ -19,6 +19,7 @@ public class InRangeFeed {
         // save the port
         this.feedSocketPort = port;
     }
+
     public InRangeFeed() throws IOException {
         new InRangeFeed(feedSocketPort);
     }

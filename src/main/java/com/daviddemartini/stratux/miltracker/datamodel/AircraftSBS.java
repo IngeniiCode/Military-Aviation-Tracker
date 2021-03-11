@@ -1,16 +1,13 @@
 package com.daviddemartini.stratux.miltracker.datamodel;
 
+import com.daviddemartini.stratux.miltracker.util.MilCallsignStringParse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-import com.daviddemartini.stratux.miltracker.util.MilCallsignStringParse;
 
 /**
  * Aircraft object is based upon the MSG and other feed data
@@ -18,22 +15,21 @@ import com.daviddemartini.stratux.miltracker.util.MilCallsignStringParse;
  *
  *
  * ****** MSG Transmission Examples *******
- *  MSG,1,145,256,7404F2,11267,2008/11/28,23:48:18.611,2008/11/28,23:53:19.161,RJA1118,,,,,,,,,,,
- *  MSG,2,496,603,400CB6,13168,2008/10/13,12:24:32.414,2008/10/13,12:28:52.074,,,0,76.4,258.3,54.05735,-4.38826,,,,,,0
- *  MSG,3,496,211,4CA2D6,10057,2008/11/28,14:53:50.594,2008/11/28,14:58:51.153,,37000,,,51.45735,-1.02826,,,0,0,0,0
- *  MSG,4,496,469,4CA767,27854,2010/02/19,17:58:13.039,2010/02/19,17:58:13.368,,,288.6,103.2,,,-832,,,,,
- *  MSG,5,496,329,394A65,27868,2010/02/19,17:58:12.644,2010/02/19,17:58:13.368,,10000,,,,,,,0,,0,0
- *  MSG,6,496,237,4CA215,27864,2010/02/19,17:58:12.846,2010/02/19,17:58:13.368,,33325,,,,,,0271,0,0,0,0
- *  MSG,7,496,742,51106E,27929,2011/03/06,07:57:36.523,2011/03/06,07:57:37.054,,3775,,,,,,,,,,0
- *  MSG,8,496,194,405F4E,27884,2010/02/19,17:58:13.244,2010/02/19,17:58:13.368,,,,,,,,,,,,0
+ * MSG,1,145,256,7404F2,11267,2008/11/28,23:48:18.611,2008/11/28,23:53:19.161,RJA1118,,,,,,,,,,,
+ * MSG,2,496,603,400CB6,13168,2008/10/13,12:24:32.414,2008/10/13,12:28:52.074,,,0,76.4,258.3,54.05735,-4.38826,,,,,,0
+ * MSG,3,496,211,4CA2D6,10057,2008/11/28,14:53:50.594,2008/11/28,14:58:51.153,,37000,,,51.45735,-1.02826,,,0,0,0,0
+ * MSG,4,496,469,4CA767,27854,2010/02/19,17:58:13.039,2010/02/19,17:58:13.368,,,288.6,103.2,,,-832,,,,,
+ * MSG,5,496,329,394A65,27868,2010/02/19,17:58:12.644,2010/02/19,17:58:13.368,,10000,,,,,,,0,,0,0
+ * MSG,6,496,237,4CA215,27864,2010/02/19,17:58:12.846,2010/02/19,17:58:13.368,,33325,,,,,,0271,0,0,0,0
+ * MSG,7,496,742,51106E,27929,2011/03/06,07:57:36.523,2011/03/06,07:57:37.054,,3775,,,,,,,,,,0
+ * MSG,8,496,194,405F4E,27884,2010/02/19,17:58:13.244,2010/02/19,17:58:13.368,,,,,,,,,,,,0
  *
  * ****** Non-MSG Transmission Examples *******
- *  SEL,,496,2286,4CA4E5,27215,2010/02/19,18:06:07.710,2010/02/19,18:06:07.710,RYR1427
- *  ID,,496,7162,405637,27928,2010/02/19,18:06:07.115,2010/02/19,18:06:07.115,EZY691A
- *  AIR,,496,5906,400F01,27931,2010/02/19,18:06:07.128,2010/02/19,18:06:07.128
- *  STA,,5,179,400AE7,10103,2008/11/28,14:58:51.153,2008/11/28,14:58:51.153,RM
- *  CLK,,496,-1,,-1,2010/02/19,18:18:19.036,2010/02/19,18:18:19.036
- *
+ * SEL,,496,2286,4CA4E5,27215,2010/02/19,18:06:07.710,2010/02/19,18:06:07.710,RYR1427
+ * ID,,496,7162,405637,27928,2010/02/19,18:06:07.115,2010/02/19,18:06:07.115,EZY691A
+ * AIR,,496,5906,400F01,27931,2010/02/19,18:06:07.128,2010/02/19,18:06:07.128
+ * STA,,5,179,400AE7,10103,2008/11/28,14:58:51.153,2008/11/28,14:58:51.153,RM
+ * CLK,,496,-1,,-1,2010/02/19,18:18:19.036,2010/02/19,18:18:19.036
  */
 
 public class AircraftSBS {
@@ -70,8 +66,8 @@ public class AircraftSBS {
     /**
      * Constructor
      *
-     *   Accepts dump1090 message string (.csv string) or undeclared
-     *    creates Aircraft data model object
+     * Accepts dump1090 message string (.csv string) or undeclared
+     * creates Aircraft data model object
      *
      * @param message - dump1090 port 30003 message
      */
@@ -79,18 +75,21 @@ public class AircraftSBS {
         // execute merge operation
         this.merge(message);
     }
-    public AircraftSBS() { }
+
+    public AircraftSBS() {
+    }
 
     /**
      * Merge dump1090 data message into object.
      *
      * @param message
      */
-    public void merge(String message){
+    public void merge(String message) {
         // parse the message into the fields
         merge(Arrays.asList(message.split(",")));
     }
-    public void merge(AircraftSBS aircraftSBS){
+
+    public void merge(AircraftSBS aircraftSBS) {
         // verify objects are the same, otherwise exit
         assert this.getClass().getName().equals(aircraftSBS.getClass().getName());
         // iterate the fields and replace when not null
@@ -112,12 +111,12 @@ public class AircraftSBS {
      *
      * @param parsedFields - pre-parsed list of Strings
      */
-    public void merge(List<String> parsedFields){
+    public void merge(List<String> parsedFields) {
 
         // iterate the parsed fields
-        for (int fieldNum = 0; fieldNum < parsedFields.size(); fieldNum++){
+        for (int fieldNum = 0; fieldNum < parsedFields.size(); fieldNum++) {
             String fieldVal = parsedFields.get(fieldNum).trim();
-            if(fieldVal != null && !fieldVal.trim().isEmpty()) {
+            if (fieldVal != null && !fieldVal.trim().isEmpty()) {
                 switch (fieldNum) {
                     case 0:
                         this.transmissionType = fieldVal;
@@ -151,7 +150,7 @@ public class AircraftSBS {
                         break;
                     case 10:
                         this.callsign = fieldVal;
-                        if (MilCallsignStringParse.isCallsignMil(this.callsign)){
+                        if (MilCallsignStringParse.isCallsignMil(this.callsign)) {
                             milCallsign = true;
                         }
                         break;
@@ -198,7 +197,7 @@ public class AircraftSBS {
      *
      * Setups up some values that can be parsed from returned JSON payload
      */
-    public void testInit(){
+    public void testInit() {
         this.squawkInt = 1200;
         this.callsign = "TESTY05";
         this.icao = "A00000";
@@ -206,7 +205,8 @@ public class AircraftSBS {
 
     /**
      * Express self as a JSON string.
-     * @return
+     *
+     * @return - String of Json content
      */
     public String toJSON() throws IOException {
         // convert this data object to JSON
@@ -214,7 +214,13 @@ public class AircraftSBS {
         return mapper.writeValueAsString(this);
     }
 
-    // JsonInclude.Include.NON_NULL
+    /**
+     * Stripped down version of Json object representation
+     * that excludes null fields
+     *
+     * @return - String of Json content
+     * @throws IOException
+     */
     public String toJSONLite() throws IOException {
         // convert this data object to JSON
         ObjectMapper mapper = new ObjectMapper();
@@ -222,14 +228,14 @@ public class AircraftSBS {
         return mapper.writeValueAsString(this);
     }
 
-
     /**
      * Terse logging message
      *
      * Intended for use during development, announce terse contact data.
-     * @return
+     *
+     * @return - String of contact properties
      */
-    public String announceContactTerse(){
+    public String announceContactTerse() {
         return String.format("%8s%6s(%s)  %.2fmi @ %.2fsº  %,dft  %.0fkts",
                 getCallsign(),
                 ((this.milCallsign != null && this.milCallsign.booleanValue()) ? " +MIL+ " : ""),
@@ -242,22 +248,17 @@ public class AircraftSBS {
     }
 
     /**
-     *** SETTERS ***
+     * Exposed method of setting flag indicating possible military callsign
+     *
+     * @param milCallsign
      */
-    public void setDistance(float distance){
-        this.distance = distance;
-    }
-
-    public void setBearing(float bearing){
-        this.bearing = bearing;
-    }
-
-    public void setMilCallsign(boolean milCallsign){
+    public void setMilCallsign(boolean milCallsign) {
         this.milCallsign = milCallsign;
+
     }
 
     /**
-     *** GETTERS ***
+     * ** GETTERS ***
      */
     public String getTransmissionType() {
         return transmissionType;
@@ -332,7 +333,7 @@ public class AircraftSBS {
     }
 
     public String getSquawk() {
-        return String.format("%04d",squawkInt);
+        return String.format("%04d", squawkInt);
     }
 
     public Boolean isSquawkChanged() {
@@ -351,19 +352,30 @@ public class AircraftSBS {
         return onGround;
     }
 
-    public Float getDistance(){
+    public Float getDistance() {
         return distance;
     }
 
-    public Float getBearing(){
+    /**
+     * ** SETTERS ***
+     */
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+
+    public Float getBearing() {
         return bearing;
     }
 
-    public Boolean isMilCallsign(){
+    public void setBearing(float bearing) {
+        this.bearing = bearing;
+    }
+
+    public Boolean isMilCallsign() {
         return milCallsign;
     }
 
-    public boolean milContactTrue(){
+    public boolean milContactTrue() {
         return (this.milCallsign != null && this.milCallsign.booleanValue());
     }
 }

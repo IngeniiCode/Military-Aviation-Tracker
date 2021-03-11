@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class SBSTrafficSocket {
 
@@ -27,6 +26,7 @@ public class SBSTrafficSocket {
         // not port provided, assume prot 30003
         new SBSTrafficSocket(URI, 30003);
     }
+
     public SBSTrafficSocket(String URI, int port) throws Exception {
         this.URI = URI;
         this.port = port;
@@ -35,7 +35,6 @@ public class SBSTrafficSocket {
 
     /**
      * Read traffic from the input port
-     *
      */
     public void readTraffic() throws IOException {
         BufferedReader bis = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
@@ -61,7 +60,7 @@ public class SBSTrafficSocket {
      *
      * @return socket - Socket
      */
-    public Socket getSocket(){
+    public Socket getSocket() {
         return socket;
     }
 
@@ -70,7 +69,7 @@ public class SBSTrafficSocket {
      *
      * @return stream - InputStream
      */
-    public InputStream getStream(){
+    public InputStream getStream() {
         return stream;
     }
 
