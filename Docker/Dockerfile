@@ -13,17 +13,17 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /app
 
 # Build the project
-RUN git clone https://github.com/IngeniiCode/StratuxMilTracker.git 
-WORKDIR /StratuxMilTracker
+RUN git clone https://github.com/IngeniiCode/Military-Aviation-Tracker.git
+WORKDIR /Military-Aviation-Tracker
 RUN mvn install -Dmaven.assembly.skip=false  
 # copy the tar to app directory from where the Run stage will copy to it's context
-RUN mv /StratuxMilTracker/target/StratuxMilTracker*SNAPSHOT-jar-with-dependencies.jar /app/StratuxMilTracker.jar 
+RUN mv /Military-Aviation-Tracker/target/StratuxMilTracker*SNAPSHOT-jar-with-dependencies.jar /app/Military-Aviation-Tracker.jar 
 
 #
 # RESET and copy just the build jar from our first stage
 #
 FROM arm32v7/openjdk:11-jre-slim AS Run 
-COPY --from=Build /app/StratuxMilTracker.jar .
+COPY --from=Build /app/Military-Aviation-Tracker.jar .
 
 #
 #  -ToDo-  setup configuration information into env. params for App
@@ -31,5 +31,5 @@ COPY --from=Build /app/StratuxMilTracker.jar .
 
 EXPOSE 9101-9105
 
-CMD ["java","-jar","/StratuxMilTracker.jar"]
+CMD ["java","-jar","/Military-Aviation-Tracker.jar"]
 

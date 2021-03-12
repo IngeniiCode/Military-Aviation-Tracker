@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.daviddemartini.stratux.miltracker</groupId>
-    <artifactId>StratuxMilTracker</artifactId>
-    <version>Legacy-Java</version>
+    <artifactId>Military-Aviation-Tracker</artifactId>
+    <version>LegacyJava</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
