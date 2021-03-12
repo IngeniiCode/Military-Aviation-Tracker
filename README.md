@@ -16,15 +16,16 @@ toward determining distribution of callsigns and airframes observed, and which h
 ## Usage
 
 ### Application parameters
-| Parameter | Argument Type | Function |
-| --- | --- | ---|
-| --host | string | hostname or IP of stratux receiver  |
-| --port | number | port on which dump1090 SBS messages are published (def. 30003)  | 
-| --lat | number | latitude in degrees  (e.g. 29.88058)  |
-| --long | number | longitude in degrees (e.g. -98.23455) |
-| --range | number | maximum distance in miles for contacts |
-| --milonly | flag | only process contacts exhibiting military attributes |
-| --quiet | flag | only display contacts meeting filter requirement |
+| Parameter | Environment Variable | Argument Type | Function |
+|--- | --- | --- |--- |
+| --myhost | MILTRACK_PUBLISHER_HOST | string | hostname or IP address to bind publish ports to |
+| --host | MILTRACK_DUMP1090_HOST | string | hostname or IP of stratux receiver  |
+| --port | MILTRACK_DUMP1090_PORT | number | port on which dump1090 SBS messages are published (def. 30003)  | 
+| --lat | MILTRACK_FIXED_LATITUDE | number | latitude in degrees  (e.g. 29.88058)  |
+| --long | MILTRACK_FIXED_LONGITUDE | number | longitude in degrees (e.g. -98.23455) |
+| --range | MILTRACK_MAX_DETECTION_RANGE | number | maximum distance in miles for contacts |
+| --milonly |   | flag | only process contacts exhibiting military attributes |
+| --quiet |   | flag | only display contacts meeting filter requirement |
 
 
 ### Startup without geolocation
@@ -80,7 +81,7 @@ The following publishing ports are planned.
 |Nearby Contact (in range X) | 9102 | Json data – contact w/ range, bearing, altitude and speed within a defined range (ex.  only contacts within 5 miles) |
 |Military Style Contacts | 9103 | Json data – contacts w/ range, bearing, altitude, speed & mil flag |
 |Military Style (in range X) | 9104 | Json data – contacts w/ range, bearing, altitude, speed & mil flag within a defined range (ex.  only contacts within 5 miles) |
-
+|Real-Time All Contacts | 9105 | Josn data - all contacts with at least known callsign |
 
 ## Change Log
 | Updated | Author | Comments |
@@ -95,5 +96,6 @@ The following publishing ports are planned.
 | 11-MAR-2021 | d.demartini | Added new Military Contact Json feed on port 9103 |
 | 11-MAR-2021 | d.demartini | Added new In-Range (aka fly-by) Contact Json feed on port 9102 |
 | 11-MAR-2021 | d.demartini | Added new In-Range (aka fly-by) Military Contact Json feed on port 9104 |
-
+| 12-MAR-2021 / d.demartini | Added capability to set Environt Variables to configured service |
+| 12-MAR-2021 | d.demartini | Added new port (9105) to publish all available data in real time |
 

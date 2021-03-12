@@ -2,15 +2,13 @@ package com.daviddemartini.stratux.miltracker;
 
 import com.daviddemartini.stratux.miltracker.util.Args;
 import com.daviddemartini.stratux.miltracker.util.StringStuffer;
-
+import org.apache.commons.cli.UnrecognizedOptionException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ArgsTest {
 
@@ -18,7 +16,7 @@ public class ArgsTest {
     private static final int TEST_PORT = 30003;
     private static final double TEST_LAT = 29.91401;
     private static final double TEST_LON = -98.20301;
-    private static final String[] BAD_ARGS = StringStuffer.fill(new String[1], "");
+    private static final String[] BAD_ARGS = StringStuffer.fill(new String[1], "--foobar=x");
 
     @BeforeAll
     static void firstOperations(){
@@ -29,9 +27,9 @@ public class ArgsTest {
     @Test
     void testArgs_BadArguments() {
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(UnrecognizedOptionException.class, () -> {
             Args clArgs = new Args(BAD_ARGS);
-            clArgs.getSocketHost();
+            clArgs.getDump1090Hostname();
         });
 
     }
@@ -46,8 +44,8 @@ public class ArgsTest {
         GOOD_WEBSOCKET_ARGS[1] = "--port=" + TEST_PORT;
         // evaluate
         Args clArgs = new Args(GOOD_WEBSOCKET_ARGS);
-        assertEquals(TEST_HOST, clArgs.getSocketHost());
-        assertEquals(TEST_PORT, clArgs.getSocketPort());
+        assertEquals(TEST_HOST, clArgs.getDump1090Hostname());
+        assertEquals(TEST_PORT, clArgs.getDump1090Port());
 
     }
 
@@ -64,10 +62,10 @@ public class ArgsTest {
 
         // evaluate
         Args clArgs = new Args(GOOD_WEBSOCKET_ARGS);
-        assertEquals(TEST_HOST, clArgs.getSocketHost());
-        assertEquals(TEST_PORT, clArgs.getSocketPort());
-        assertEquals(TEST_LAT, clArgs.getPositionLatitude());
-        assertEquals(TEST_LON, clArgs.getPositionLongitude());
+        assertEquals(TEST_HOST, clArgs.getDump1090Hostname());
+        assertEquals(TEST_PORT, clArgs.getDump1090Port());
+        assertEquals(TEST_LAT, clArgs.getFixedPositionLatitude());
+        assertEquals(TEST_LON, clArgs.getFixedPositionLongitude());
         assertFalse(clArgs.hasMilOnly());
         assertFalse(clArgs.hasQuiet());
 

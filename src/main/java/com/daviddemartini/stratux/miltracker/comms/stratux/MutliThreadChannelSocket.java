@@ -13,24 +13,26 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
-public class MilContactFeed {
+public class MutliThreadChannelSocket {
 
-    private final String hostname = "localhost";
+    private static String connectionString;
     private final Selector selector;
     ServerSocketChannel serverSocketChannel;
     private SelectionKey selectionKey;
 
     /**
      * Constructor
-     * <p>
+     *
      * Expects a port to be passed, but will use the pre-configured
      * default if it is not
      *
      * @param feedSocketPort - integer port number to bind
      */
-    public MilContactFeed(int feedSocketPort) throws IOException {
+    public MutliThreadChannelSocket(String feedSocketHost, int feedSocketPort) throws IOException {
         // setup the socket channel
-        InetAddress host = InetAddress.getByName(hostname);
+        InetAddress host = InetAddress.getByName(feedSocketHost);
+        this.connectionString = String.format("%s:%d",host.toString(),feedSocketPort);
+        System.out.printf("\t%s listen %s\n",this.getClass().getName(),this.connectionString);
         this.selector = Selector.open();
         this.serverSocketChannel = ServerSocketChannel.open();
         this.serverSocketChannel.configureBlocking(false);
@@ -45,11 +47,11 @@ public class MilContactFeed {
      * @param contact
      */
     public boolean publishContact(AircraftSBS contact) {
-        // express military contact in JSON with any known data.
+        // express contacts detected within certain range in JSON with any known data.
         try {
             return writeToSocket(contact);
         } catch (Exception e) {
-            System.err.printf("MILITARY CONTACT ERROR -- %s\n", e.getMessage());
+            System.err.printf("MutliThreadChannelSocket [%d] ERROR -- %s\n",this.connectionString, e.getMessage());
         }
         return false;
     }
@@ -91,5 +93,4 @@ public class MilContactFeed {
         }
         return true;
     }
-
 }

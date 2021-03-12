@@ -1,5 +1,6 @@
 package com.daviddemartini.stratux.miltracker.util;
 
+import com.daviddemartini.stratux.miltracker.util.Settings;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -7,17 +8,12 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 
-public class Args {
+public class Args extends Settings {
 
-    private String socketHost = null;
-    private int socketPort;
-    private double positionLatitude;
-    private double positionLongitude;
     private boolean hasLatitude = false;
     private boolean hasLongitude = false;
     private boolean milOnly = false;
     private boolean quiet = false;
-    private double maxRange;
 
     /**
      * Constructor
@@ -30,15 +26,21 @@ public class Args {
         Options options = new Options();
 
         // define what optiosn are provided
+        options.addOption(Option.builder("m")
+                .longOpt("myhost")
+                .desc("Publishing hostname")
+                .hasArg()
+                .build());
+
         options.addOption(Option.builder("h")
                 .longOpt("host")
-                .desc("Socket hostname")
+                .desc("Dump1090 Socket hostname")
                 .hasArg()
                 .build());
 
         options.addOption(Option.builder("p")
                 .longOpt("port")
-                .desc("Socket port")
+                .desc("Dump1090 Socket port")
                 .hasArg()
                 .build());
 
@@ -48,7 +50,7 @@ public class Args {
                 .hasArg()
                 .build());
 
-        options.addOption(Option.builder("h")
+        options.addOption(Option.builder("l")
                 .longOpt("lon")
                 .desc("Position Longitude")
                 .hasArg()
@@ -75,22 +77,25 @@ public class Args {
         CommandLine cmd = new DefaultParser().parse(options,args);
 
         // check for parameters
+        if (cmd.hasOption("myhost")) {
+            publisherHostname = cmd.getOptionValue("myhost");
+        }
         if (cmd.hasOption("host")) {
-            socketHost = cmd.getOptionValue("host");
+            dump1090Hostname = cmd.getOptionValue("host");
         }
         if (cmd.hasOption("port")) {
-            socketPort = Integer.parseInt(cmd.getOptionValue("port"));
+            dump1090Port = Integer.parseInt(cmd.getOptionValue("port"));
         }
         if (cmd.hasOption("lat")) {
             hasLatitude = true;
-            positionLatitude = Double.parseDouble(cmd.getOptionValue("lat"));
+            fixedPositionLatitude = Double.parseDouble(cmd.getOptionValue("lat"));
         }
         if (cmd.hasOption("lon")) {
             hasLongitude = true;
-            positionLongitude = Double.parseDouble(cmd.getOptionValue("lon"));
+            fixedPositionLongitude = Double.parseDouble(cmd.getOptionValue("lon"));
         }
         if (cmd.hasOption("range")) {
-            maxRange = Double.parseDouble(cmd.getOptionValue("range"));
+            maxDetectionRange = Double.parseDouble(cmd.getOptionValue("range"));
         }
         if (cmd.hasOption("milonly")) {
             // only announce contacts that exhibit a military like callsign
@@ -101,57 +106,6 @@ public class Args {
             quiet = true;
         }
 
-    }
-
-    /**
-     * get the socket hostname
-     *
-     * @return
-     */
-    public String getSocketHost() throws Exception {
-        if(this.socketHost != null) {
-            return socketHost;
-        }
-        else {
-            Exception e = new IllegalArgumentException("Invalid or missing socket address/url paramter --url");
-            throw e ;
-        }
-    }
-
-    /**
-     * get the socket port
-     *
-     * @return
-     */
-    public int getSocketPort(){
-        return socketPort;
-    }
-
-    /**
-     * get the fixed position Latutude, if known
-     *
-     * @return
-     */
-    public double getPositionLatitude(){
-        return positionLatitude;
-    }
-
-    /**
-     * get the fixed postion Longitude, if known
-     *
-     * @return
-     */
-    public double getPositionLongitude(){
-        return positionLongitude;
-    }
-
-    /**
-     * get max range, if set
-     *
-     * @return
-     */
-    public double getMaxRange(){
-        return maxRange;
     }
 
     /**

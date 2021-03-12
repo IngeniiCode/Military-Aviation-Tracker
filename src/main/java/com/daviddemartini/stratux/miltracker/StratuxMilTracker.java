@@ -1,9 +1,6 @@
 package com.daviddemartini.stratux.miltracker;
 
-import com.daviddemartini.stratux.miltracker.comms.stratux.InRangeFeed;
-import com.daviddemartini.stratux.miltracker.comms.stratux.MilContactFeed;
-import com.daviddemartini.stratux.miltracker.comms.stratux.NewContactFeed;
-import com.daviddemartini.stratux.miltracker.comms.stratux.InRangeMilContactFeed;
+import com.daviddemartini.stratux.miltracker.comms.stratux.MutliThreadChannelSocket;
 import com.daviddemartini.stratux.miltracker.comms.stratux.SBSTrafficSocket;
 import com.daviddemartini.stratux.miltracker.datamodel.AircraftSBS;
 import com.daviddemartini.stratux.miltracker.geolocation.DistanceBearing;
@@ -24,10 +21,11 @@ public class StratuxMilTracker {
     private static double fixedPositionLongitude;
     private static double maxRange = 0; // 0 == unlimited range
     private static Args clArgs;
-    private static NewContactFeed PubNewContact;
-    private static MilContactFeed PubMilContact;
-    private static InRangeFeed PubInRangeContact;
-    private static InRangeMilContactFeed PubMilInRangeContact;
+    private static MutliThreadChannelSocket PubNewContact;
+    private static MutliThreadChannelSocket PubMilContact;
+    private static MutliThreadChannelSocket PubInRangeContact;
+    private static MutliThreadChannelSocket PubMilInRangeContact;
+    private static MutliThreadChannelSocket PubEveryContact;
 
     public static void main(String[] args) {
         // process the CL args..
@@ -36,28 +34,28 @@ public class StratuxMilTracker {
             clArgs = new Args(args);
 
             // Setup stream reader
-            SBSTrafficSocket sbsTrafficSocket = new SBSTrafficSocket(clArgs.getSocketHost(), clArgs.getSocketPort());
+            SBSTrafficSocket sbsTrafficSocket = new SBSTrafficSocket(clArgs.getDump1090Hostname(), clArgs.getDump1090Port());
 
             if (clArgs.hasPosition()) {
-                maxRange = (clArgs.getMaxRange() > 0) ? clArgs.getMaxRange() : maxRange;
+                maxRange = (clArgs.getMaxDetectionRange() > 0) ? clArgs.getMaxDetectionRange() : maxRange;
                 if (!clArgs.hasQuiet()) {
                     System.out.printf("Fixed Position Set.  Only %scontacts with position %sare displayed\n\n",
                             (clArgs.hasMilOnly()) ? "Military " : "",
                             (maxRange > 0) ? String.format("within %.1f miles ", maxRange) : ""
                     );
                 }
-                fixedPositionLatitude = clArgs.getPositionLatitude();
-                fixedPositionLongitude = clArgs.getPositionLongitude();
+                fixedPositionLatitude = clArgs.getFixedPositionLatitude();
+                fixedPositionLongitude = clArgs.getFixedPositionLongitude();
                 distanceBearing = new DistanceBearing(fixedPositionLatitude, fixedPositionLongitude);
             }
 
             // setup the publishing ports
-
             System.out.println("Starting Feed Publishers");
-            PubNewContact = new NewContactFeed(9101);
-            PubInRangeContact = new InRangeFeed(9102);
-            PubMilContact = new MilContactFeed(9103);
-            PubMilInRangeContact = new InRangeMilContactFeed(9104);
+            PubNewContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9101);
+            PubInRangeContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9102);
+            PubMilContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9103);
+            PubMilInRangeContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9104);
+            PubEveryContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9105);
 
             // process traffic feed from  sbsTrafficSocket
             processMessages(AirTraffic, sbsTrafficSocket);
@@ -121,17 +119,12 @@ public class StratuxMilTracker {
                     // has ground speed
                     break;
                 case 6:
-                    // contains the sqwak code.
+                    // contains the squawk code.
                     break;
                 case 7:
                 case 8:
                 default:
                     // TBD
-            }
-
-            // don't announce anything that doesn't yet have a callsign, it's just not interesting
-            if (contact.getCallsign() != null) {
-                publishContact = false;
             }
 
             // Get the ICAO Hex present in every message
@@ -140,6 +133,10 @@ public class StratuxMilTracker {
             // check to see if this is a known or new contact
             if (airTraffic.containsKey(icao)) {
                 airTraffic.get(icao).merge(contact);
+                // don't announce anything that doesn't yet have a callsign, it's just not interesting
+                if (airTraffic.get(icao).getCallsign() == null) {
+                    publishContact = false;
+                }
             } else {
                 airTraffic.put(icao, contact);
                 // it not operating in quiet mode, announce the new contact
@@ -152,26 +149,33 @@ public class StratuxMilTracker {
 
             // decide if contact should be displayed or not
             if (publishContact) {
+                PubEveryContact.publishContact(airTraffic.get(icao));
                 if (airTraffic.get(icao).isMilCallsign() != null && airTraffic.get(icao).isMilCallsign().booleanValue()) {
                     PubMilContact.publishContact(airTraffic.get(icao));
                     if(publishInRageContact) {
                         PubMilInRangeContact.publishContact(airTraffic.get(icao));
                     }
                     if (clArgs.hasMilOnly()) {
-                        System.out.printf("\t\t%s\n", airTraffic.get(icao).announceContactTerse());
+                        Announce(airTraffic.get(icao));
                     }
                 }
                 if(publishInRageContact){
                     PubInRangeContact.publishContact(airTraffic.get(icao));
                 }
             } else {
-                System.out.printf("\t\t%s\n", airTraffic.get(icao).announceContactTerse());
+                Announce(airTraffic.get(icao));
             }
         }
 
         // done, close socket
         sbsTrafficSocket.getSocket().close();
 
+    }
+
+    private static void Announce(AircraftSBS contact){
+        if(contact.getCallsign() != null){
+            System.out.printf("\t\t%s\n", contact.announceContactTerse());
+        }
     }
 
 }

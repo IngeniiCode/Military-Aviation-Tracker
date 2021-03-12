@@ -47,11 +47,11 @@ public class AircraftSBS {
     // the following fields are not expected part of every message, and contain aircraft details
 
     private String callsign;
-    private int altitude;
+    private Integer altitude;
     private Float speedGround;
     private float track;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
     private int verticalRate;
     private int squawkInt;
     private Boolean squawkChanged;
@@ -304,7 +304,7 @@ public class AircraftSBS {
         return callsign;
     }
 
-    public long getAltitude() {
+    public Integer getAltitude() {
         return altitude;
     }
 
@@ -316,11 +316,11 @@ public class AircraftSBS {
         return track;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
