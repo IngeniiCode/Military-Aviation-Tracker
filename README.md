@@ -17,7 +17,7 @@ toward determining distribution of callsigns and airframes observed, and which h
 
 ### Application parameters
 | Parameter | Environment Variable | Argument Type | Function |
-|--- | --- | --- |--- |
+|--- |--- | --- |--- |
 | --myhost | MILTRACK_PUBLISHER_HOST | string | hostname or IP address to bind publish ports to |
 | --host | MILTRACK_DUMP1090_HOST | string | hostname or IP of stratux receiver  |
 | --port | MILTRACK_DUMP1090_PORT | number | port on which dump1090 SBS messages are published (def. 30003)  | 
@@ -31,8 +31,8 @@ toward determining distribution of callsigns and airframes observed, and which h
 ### Startup without geolocation
 Startup without setting fixed station location will provide limited function, the the messages can still be processed
 
-  --host =  hostname or IP of stratux receiver  
-  --port =  port on which dump1090 SBS messages are published (def. 30003)   
+  `--host` =  hostname or IP of stratux receiver  
+  `--port` =  port on which dump1090 SBS messages are published (def. 30003)   
 
       java -jar target/StratuxMilTracker-1.0-SNAPSHOT-jar-with-dependencies.jar  --host=192.168.1.20 --port=30003
 
@@ -40,20 +40,20 @@ Startup without setting fixed station location will provide limited function, th
 ### Startup with geolocation
 Provided basic funtion with range and bearing (azimuth) calculations.  Setting the fixed location also enables other features such as maxmum range filtering
 
-  --host =  hostname or IP of stratux receiver  
-  --port =  port on which dump1090 SBS messages are published (def. 30003)  
-  --lat = latitude in degrees  (e.g. 29.88058)
-  --long = longitude in degrees (e.g. -98.23455)
+  `--host` =  hostname or IP of stratux receiver  
+  `--port` =  port on which dump1090 SBS messages are published (def. 30003)   
+  `--lat` = latitude in degrees  (e.g. 29.88058)  
+  `--long` = longitude in degrees (e.g. -98.23455)  
 
     java -jar target/StratuxMilTracker-1.0-SNAPSHOT-jar-with-dependencies.jar  --host=192.168.1.20 --port=30003 --lat=29.88058 --lon=-98.23455 
 
 ### Startup with geolocation, show only military contacts within 8 miles
 Provided basic funtion with range and bearing (azimuth) calculations.  Setting the fixed location also enables other features such as maxmum range filtering
   
-  --host =  hostname or IP of stratux receiver  
-  --port =  port on which dump1090 SBS messages are published (def. 30003)  
-  --lat = latitude in degrees  (e.g. 29.88058)
-  --long = longitude in degrees (e.g. -98.23455)
+  `--host` =  hostname or IP of stratux receiver   
+  `--port` =  port on which dump1090 SBS messages are published (def. 30003)    
+  `--lat` = latitude in degrees  (e.g. 29.88058)  
+  `--long` = longitude in degrees (e.g. -98.23455)  
 
     java -jar target/StratuxMilTracker-1.0-SNAPSHOT-jar-with-dependencies.jar  --host=192.168.1.20 --port=30003 --lat=29.88058 --lon=-98.23455 --range=8 --milonly 
   
@@ -76,7 +76,7 @@ or update the AircraftSBS data model.
 Json data streams are available on the following ports.
 
 #### Debugging
-You can easily varify connectivity and monitor output using `telent`  
+You can easily varify connectivity and monitor output using `telnet`  
     ex:   `telnet localhost 9105` 
 
 |Service Name|Port|Description|
@@ -95,13 +95,14 @@ You can easily varify connectivity and monitor output using `telent`
 | 06-MAR-2021 | d.demartini | changed from websocket service to TCP port reader |
 | 07-MAR-2021 | d.demartini | added simple caching repository to store new AircraftSBS data objects |
 | 08-MAR-2021 | d.demartini | implemented range and bearing formulas (arched triangle calculations) | 
-| 10-MAR-2021 | d.demartini | extended function with --milonly and --quiet features | 
+| 10-MAR-2021 | d.demartini | extended function with `--milonly` and `--quiet` features | 
 | 11-MAR-2021 | d.demartini | Added New Contact Json feed on port 9101 |
 | 11-MAR-2021 | d.demartini | Added new Military Contact Json feed on port 9103 |
 | 11-MAR-2021 | d.demartini | Added new In-Range (aka fly-by) Contact Json feed on port 9102 |
 | 11-MAR-2021 | d.demartini | Added new In-Range (aka fly-by) Military Contact Json feed on port 9104 |
-| 12-MAR-2021 | d.demartini | Added capability to set Environt Variables to configured service |
+| 12-MAR-2021 | d.demartini | Added capability to set Environment Variables to configure service |
 | 12-MAR-2021 | d.demartini | Added new port (9105) to publish all available data in real time |
+| 12-MAR-2021 | d.demartini | Docker enabled |
 
 ----
 ## Other Information  
