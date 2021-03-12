@@ -72,8 +72,12 @@ or update the AircraftSBS data model.
     SPAR99 +MIL+ (AE0978)  9.27mi @ 182.08sº  7,650ft  261kts
 
 
-## Planned Publishing Ports
-The following publishing ports are planned.
+## Data Publishing Ports
+Json data streams are available on the following ports.
+
+#### Debugging
+You can easily varify connectivity and monitor output using `telent`  
+    ex:   `telnet localhost 9105` 
 
 |Service Name|Port|Description|
 |--- |--- |--- |
@@ -98,4 +102,32 @@ The following publishing ports are planned.
 | 11-MAR-2021 | d.demartini | Added new In-Range (aka fly-by) Military Contact Json feed on port 9104 |
 | 12-MAR-2021 / d.demartini | Added capability to set Environt Variables to configured service |
 | 12-MAR-2021 | d.demartini | Added new port (9105) to publish all available data in real time |
+
+----
+## Other Information  
+### What does the device running Dump1090 consist of?
+
+* Raspberry Pi 3b+ (1GB model)
+* NooElec  SDR (RTL)  tuned to 1090 MHz
+* NooElec tuned 1090 Mhz antenna (not in photo)
+* 5v / 2A  micro USB power supply
+
+![Raspberry PI ADS-B Decoder](./.img/RaspberryPi3_Dump1090_Receiver.jpg)
+
+_Note:_ the black box to left of Pi enclosure is not related to the Dump1090 / Stratux 
+project.  It is an FM stereo transmitter, powered by the Pi's USB used to transmit P25 Phase II decoded LEO repeater traffic.
+The rebroadcast of the decoded audio allows monitoring of the local LEO communications from
+most of the property.  
+
+### Why the interest?
+I enjoy tech projects in general, and any that deal with aviation are of special interest.
+Add into that work with radio systems and digital signal processing, and it's just something
+that I'm compelled to do.
+
+There are other motivations, one of which is getting a heads-up when one of the USAF
+training flights are heading into the area.  Occasionally they turn the lake into a
+sort of sight-seeing / high-performance envelope training sorte.  You can see a recent
+visit to the area by one of the T38's in this image (snapped by ADS-B Exchange -- awesome data tool!)
+
+![T38 FlyOver -- 2021-02-24 @ 14.18.12](./.img/T38-FlyOver_2021-02-24_14.18.12.png)  
 
