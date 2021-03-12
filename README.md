@@ -100,7 +100,7 @@ You can easily varify connectivity and monitor output using `telent`
 | 11-MAR-2021 | d.demartini | Added new Military Contact Json feed on port 9103 |
 | 11-MAR-2021 | d.demartini | Added new In-Range (aka fly-by) Contact Json feed on port 9102 |
 | 11-MAR-2021 | d.demartini | Added new In-Range (aka fly-by) Military Contact Json feed on port 9104 |
-| 12-MAR-2021 / d.demartini | Added capability to set Environt Variables to configured service |
+| 12-MAR-2021 | d.demartini | Added capability to set Environt Variables to configured service |
 | 12-MAR-2021 | d.demartini | Added new port (9105) to publish all available data in real time |
 
 ----
