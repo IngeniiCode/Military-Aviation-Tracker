@@ -12,7 +12,6 @@
 
     <groupId>com.daviddemartini.avtracker.microservice</groupId>
     <artifactId>MicroServices</artifactId>
-    <version>0.1.0</version>
     <packaging>pom</packaging>
 
     <modules>
