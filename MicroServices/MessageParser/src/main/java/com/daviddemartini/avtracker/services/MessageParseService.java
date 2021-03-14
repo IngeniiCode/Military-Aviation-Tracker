@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StratuxMilTracker {
+public class MessageParseService {
 
     // need a hash map of ICOA ID -> SBS Object
     private static final Map<String, AircraftSBS> AirTraffic = new HashMap<>();

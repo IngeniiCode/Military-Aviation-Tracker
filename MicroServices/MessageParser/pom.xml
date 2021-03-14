@@ -5,24 +5,73 @@
     <modelVersion>4.0.0</modelVersion>
 
    <parent>
-	<groupId>com.daviddemartini.avtracker</groupId>
-        <artifactId>Aviation-Tracker</artifactId>
+	    <groupId>com.daviddemartini.avtracker.microservice</groupId>
+        <artifactId>MicroServices</artifactId>
         <version>0.1.0</version>
    </parent>
 
     <groupId>com.daviddemartini.avtracker.services</groupId>
-    <artifactId>MessageParser</artifactId>
+    <artifactId>MessageParseService</artifactId>
 
     <properties>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
     </properties>
 
-    <dependencies>
+    <profiles>
 
-    </dependencies>
+
+
+        <!-- DEFAULT PROFILE -->
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.compiler.source>11</maven.compiler.source>
+                <maven.compiler.target>11</maven.compiler.target>
+            </properties>
+        </profile>
+
+        <!--  TEST PROFILE -->
+        <profile>
+            <id>test</id>
+            <properties>
+                <maven.compiler.source>11</maven.compiler.source>
+                <maven.compiler.target>11</maven.compiler.target>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M3</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- JAVA 11 PROFILE -->
+        <profile>
+            <id>Java8</id>
+            <properties>
+                <maven.compiler.source>8</maven.compiler.source>
+                <maven.compiler.target>8</maven.compiler.target>
+                <projectVersion>Java8_0.1.0</projectVersion>
+            </properties>
+
+        </profile>
+
+        <!-- SKIP TESTS PROFILE -->
+        <profile>
+            <id>skip</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+
+    </profiles>
 
     <build>
         <plugins>
@@ -45,7 +94,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.daviddemartini.stratux.miltracker.StratuxMilTracker</mainClass>
+                            <mainClass>com.daviddemartini.avtracker.services.MessageParseService</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -59,6 +108,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
