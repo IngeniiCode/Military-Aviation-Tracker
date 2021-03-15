@@ -1,14 +1,6 @@
 package com.daviddemartini.avtracker.services.util;
 
-import com.daviddemartini.avtracker.services.util.Settings;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-
-import java.util.Locale;
+import org.apache.commons.cli.*;
 
 public class Args extends Settings {
 
@@ -16,6 +8,7 @@ public class Args extends Settings {
     private boolean hasLongitude = false;
     private boolean milOnly = false;
     private boolean quiet = false;
+    private boolean debug = false;
 
     /**
      * Constructor
@@ -75,18 +68,19 @@ public class Args extends Settings {
                 .desc("Only log military contacts")
                 .build());
 
-
-
         options.addOption(Option.builder("q")
                 .longOpt("quiet")
                 .desc("Quieter operation - do not announce new contacts")
                 .build());
 
-
+        options.addOption(Option.builder("d")
+                .longOpt("debug")
+                .desc("Dump all contacts to STDOUT for debugging")
+                .build());
 
         // create the parser and the commadline interface
         CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = new DefaultParser().parse(options,args);
+        CommandLine cmd = new DefaultParser().parse(options, args);
 
         // check for parameters
         if (cmd.hasOption("myhost")) {
@@ -117,7 +111,11 @@ public class Args extends Settings {
             // don't announce new contacts
             quiet = true;
         }
-        if(cmd.hasOption("resolution")){
+        if (cmd.hasOption("debug")) {
+            // don't announce new contacts
+            debug = true;
+        }
+        if (cmd.hasOption("resolution")) {
             resolution = cmd.getOptionValue("resolution").toLowerCase().trim();
         }
 
@@ -128,7 +126,7 @@ public class Args extends Settings {
      *
      * @return
      */
-    public boolean hasPosition(){
+    public boolean hasPosition() {
         return (hasLatitude && hasLatitude);
     }
 
@@ -137,11 +135,15 @@ public class Args extends Settings {
      *
      * @return
      */
-    public boolean hasMilOnly(){
+    public boolean hasMilOnly() {
         return milOnly;
     }
 
-    public boolean hasQuiet(){
+    public boolean hasQuiet() {
         return quiet;
+    }
+
+    public boolean hasDebug() {
+        return debug;
     }
 }

@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-   <parent>
-	    <groupId>com.daviddemartini.avtracker.microservice</groupId>
+    <parent>
+        <groupId>com.daviddemartini.avtracker.microservice</groupId>
         <artifactId>MicroServices</artifactId>
         <version>0.1.0</version>
-   </parent>
+    </parent>
 
     <groupId>com.daviddemartini.avtracker.services</groupId>
     <artifactId>MessageParseService</artifactId>
@@ -50,9 +50,9 @@
             <id>skip</id>
             <properties>
 
-                    <maven.compiler.source>11</maven.compiler.source>
-                    <maven.compiler.target>11</maven.compiler.target>
-                
+                <maven.compiler.source>11</maven.compiler.source>
+                <maven.compiler.target>11</maven.compiler.target>
+
                 <maven.test.skip>true</maven.test.skip>
             </properties>
         </profile>

@@ -2,6 +2,7 @@ package com.daviddemartini.avtracker.services;
 
 import com.daviddemartini.avtracker.services.comms.stratux.MutliThreadChannelSocket;
 import com.daviddemartini.avtracker.services.comms.stratux.SBSTrafficSocket;
+import com.daviddemartini.avtracker.services.console.ConsoleLog;
 import com.daviddemartini.avtracker.services.datamodel.AircraftSBS;
 import com.daviddemartini.avtracker.services.datamodel.CacheManager;
 import com.daviddemartini.avtracker.services.geolocation.DistanceBearing;
@@ -11,16 +12,16 @@ import org.apache.commons.cli.ParseException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MessageParseService {
 
     // need a hash map of ICOA ID -> SBS Object
     private static final Map<String, AircraftSBS> ActiveContacts = new HashMap<>();
     private static DistanceBearing distanceBearing = null;
+    private static boolean debug = false;
     private static int resolution = 10;
-    //private static long garbageCollectionInterval = 300000;  // run garbage collection every 5 min. (milisecons)
-    //private static long gcAgeOffset = 600000; // contacts over 10 min. old are removed (milisecons)
     private static double fixedPositionLatitude;
     private static double fixedPositionLongitude;
     private static double maxRange = 0; // 0 == unlimited range
@@ -39,6 +40,7 @@ public class MessageParseService {
 
             // start thread (POC)
             CacheManager cashbash = new CacheManager(ActiveContacts);
+            ConsoleLog conLogger= new ConsoleLog(ActiveContacts,resolution);
 
             // Setup stream reader
             SBSTrafficSocket sbsTrafficSocket = new SBSTrafficSocket(clArgs.getDump1090Hostname(), clArgs.getDump1090Port());
@@ -58,17 +60,18 @@ public class MessageParseService {
 
             // setup the publishing ports
             System.out.println("Starting Feed Publishers");
-            PubNewContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9101);
-            PubInRangeContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9102);
-            PubMilContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9103);
-            PubMilInRangeContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9104);
-            PubEveryContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9105);
+            PubNewContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(), 9101);
+            PubInRangeContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(), 9102);
+            PubMilContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(), 9103);
+            PubMilInRangeContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(), 9104);
+            PubEveryContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(), 9105);
 
             // process traffic feed from  sbsTrafficSocket
             processMessages(ActiveContacts, sbsTrafficSocket);
 
-            // shutdown the cachebasing
+            // shutdown the threads
             cashbash.shutdown();
+            conLogger.shutdown();
 
         } catch (Exception e) {
             System.err.printf("\n** Fatal Error -- %s\n", e.toString());
@@ -80,8 +83,9 @@ public class MessageParseService {
 
     /**
      * Handle Application setup
-     *
+     * <p>
      * Compute resolution from settings, if provided
+     *
      * @param args
      * @throws ParseException
      */
@@ -89,8 +93,10 @@ public class MessageParseService {
         // store into args var
         clArgs = new Args(args);
 
+        debug = clArgs.hasDebug();
+
         // setup the publishing resolution
-        switch(clArgs.getResolution()){
+        switch (clArgs.getResolution()) {
             case "high":
                 resolution = 5;
                 break;
@@ -109,7 +115,7 @@ public class MessageParseService {
 
     /**
      * Read simple text message strings from the port connection stream
-     *
+     * <p>
      * Parse into object, check ICAO to see if it had been seen before, and if not, add to in-mem dataset, otherwise
      * merge messages into a unified model -- at some point the model would be complete enough to express a position,
      * callsign and bearing.
@@ -191,17 +197,19 @@ public class MessageParseService {
                 PubEveryContact.publishContact(airTraffic.get(icao));
                 if (airTraffic.get(icao).isMilCallsign() != null && airTraffic.get(icao).isMilCallsign().booleanValue()) {
                     PubMilContact.publishContact(airTraffic.get(icao));
-                    if(publishInRageContact) {
+                    if (publishInRageContact) {
                         PubMilInRangeContact.publishContact(airTraffic.get(icao));
                     }
                     if (clArgs.hasMilOnly()) {
                         Announce(airTraffic.get(icao));
                     }
                 }
-                if(publishInRageContact){
+                if (publishInRageContact) {
                     PubInRangeContact.publishContact(airTraffic.get(icao));
                 }
-            } else {
+            }
+
+            if(debug){
                 Announce(airTraffic.get(icao));
             }
         }
@@ -213,16 +221,16 @@ public class MessageParseService {
 
     /**
      * Announce contact to STDOUT
-     *
+     * <p>
      * This will work as preliminary data capture
+     *
      * @param contact
      */
-    private static void Announce(AircraftSBS contact){
-        if(contact.getCallsign() != null){
-            System.out.printf("\t\t%d : %s\n",ActiveContacts.size(), contact.announceContactTerse());
+    private static void Announce(AircraftSBS contact) {
+        String contactData = contact.announceContactTerse(true);
+        if(contactData != null) {
+                System.out.printf("\t[%03d] %s\n", ActiveContacts.size(), contactData);
         }
     }
-
-
 
 }

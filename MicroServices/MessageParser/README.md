@@ -27,7 +27,7 @@ toward determining distribution of callsigns and airframes observed, and which h
 | --resolution | MILTRACK_RESOLUTION | string | define how much postion/speed/ delta required to produce trigger publishing event (low,normal,high,all) |
 | --milonly |   | flag | only process contacts exhibiting military attributes |
 | --quiet |   | flag | only display contacts meeting filter requirement |
-
+| --debug |  | flag | writes all parsed message events to STDOUT | 
 
 ### Startup without geolocation
 Startup without setting fixed station location will provide limited function, the the messages can still be processed

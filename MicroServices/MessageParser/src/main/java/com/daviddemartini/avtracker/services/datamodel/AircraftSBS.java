@@ -1,12 +1,15 @@
 package com.daviddemartini.avtracker.services.datamodel;
 
 import com.daviddemartini.avtracker.services.util.MilCallsignStringParse;
+import com.daviddemartini.avtracker.services.util.TextFormatter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,7 +48,6 @@ public class AircraftSBS {
     private String messageLoggedDate;
     private String messageLoggedTime;
     // the following fields are not expected part of every message, and contain aircraft details
-
     private String callsign;
     private Integer altitude;
     private Float speedGround;
@@ -60,10 +62,11 @@ public class AircraftSBS {
     private Boolean onGround;
 
     // computed values not part of messages
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
     private Float distance;
     private Float bearing;
     private Boolean milCallsign;
-    // used for garbage collection
+    // used for timestamping reports
     private long lastReport;
     // turn up/down frequency of position updates to publishers
     private int resolution;
@@ -195,7 +198,7 @@ public class AircraftSBS {
                 }
             }
         }
-        // set lastReport long to enable garbage collection
+        // set lastReport timestamp
         this.lastReport = System.currentTimeMillis();
     }
 
@@ -242,17 +245,31 @@ public class AircraftSBS {
      *
      * @return - String of contact properties
      */
-    public String announceContactTerse() {
-        return String.format("%8s%6s(%s)  %.2fmi @ %.2fsº  %,dft  %.0fkts",
+    public String announceContactTerse(boolean completeMessageOnly) {
+        if(completeMessageOnly){
+            if(!hasCallsign()){
+                return null; // missing required record property
+            }
+            if(!hasPosition()){
+                return null; // missing required record property
+            }
+        }
+        String timeStamp = dateFormat.format(new Date());
+        return String.format("%15s %8s%7s(%6s)  %6smi @ %5sº  %7sft  %4skts",
+                timeStamp,
                 getCallsign(),
                 ((this.milCallsign != null && this.milCallsign.booleanValue()) ? " +MIL+ " : ""),
                 getIcao(),
-                getDistance(),
-                getBearing(),
-                getAltitude(),
-                getSpeedGround()
+                String.format("%.2f",getDistance()),
+                String.format("%.1f",getBearing()),
+                String.format("%,d",getAltitude()),
+                String.format("%.0f",getSpeedGround())
         );
     }
+    public String announceContactTerse(){
+        return announceContactTerse(true);
+    }
+
 
     /**
      * Exposed method of setting flag indicating possible military callsign
@@ -261,7 +278,6 @@ public class AircraftSBS {
      */
     public void setMilCallsign(boolean milCallsign) {
         this.milCallsign = milCallsign;
-
     }
 
     /**
@@ -379,6 +395,14 @@ public class AircraftSBS {
         return bearing;
     }
 
+    public boolean hasCallsign() {
+        return (this.callsign != null);
+    }
+
+    public boolean hasPosition(){
+        return (this.latitude != null && this.longitude != null);
+    }
+
     /**
      * ** SETTERS ***
      */
@@ -393,5 +417,12 @@ public class AircraftSBS {
     public void setResolution(int resolution){
         this.resolution = resolution;
     }
+
+    /**
+     *  ** STRING FORMATTERS **
+     *
+     *  -- Roadmapped --
+     */
+
 }
 

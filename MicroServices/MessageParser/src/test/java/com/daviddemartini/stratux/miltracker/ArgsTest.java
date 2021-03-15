@@ -19,7 +19,7 @@ public class ArgsTest {
     private static final String[] BAD_ARGS = StringStuffer.fill(new String[1], "--foobar=x");
 
     @BeforeAll
-    static void firstOperations(){
+    static void firstOperations() {
         // pre test setup here, if required
     }
 
@@ -88,7 +88,6 @@ public class ArgsTest {
         assertTrue(clArgs.hasQuiet());
 
     }
-
 
 
 }

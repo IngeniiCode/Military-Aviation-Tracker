@@ -294,7 +294,7 @@ public class AircraftSBSTest {
         assertFalse(jsonNode.get("onGround").asBoolean());
 
         // Display the announce method
-        System.out.println("\tANNC: " + AE1E9E_SBS.announceContactTerse());
+        System.out.println("\tANNC: " + AE1E9E_SBS.announceContactTerse(false));
 
     }
 

@@ -36,6 +36,10 @@ toward determining distribution of callsigns and airframes observed, and which h
 | 12-MAR-2021 | d.demartini | Docker enabled |
 | 14-MAR-2021 | d.demartini | Preliminary garbage collection to manage in-mem cache size |
 | 15-MAR-2021 | d.demartini | Preliminary resolution (low,normal,high,all) implemented to manage publisher volume |
+/ 15-MAR-2021 / d.demartini / Threaded garbage collector removed aged contacts from contacts cache |
+
+
+
 ----
 ## Other Information  
 ### What does the device running Dump1090 consist of?

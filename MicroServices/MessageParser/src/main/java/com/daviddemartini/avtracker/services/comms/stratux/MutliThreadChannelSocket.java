@@ -32,7 +32,7 @@ public class MutliThreadChannelSocket {
         // setup the socket channel
         InetAddress host = InetAddress.getByName(feedSocketHost);
         this.connectionString = String.format("%s:%d",host.toString(),feedSocketPort);
-        System.out.printf("\t%s listen %s\n",this.getClass().getName(),this.connectionString);
+        System.out.printf("\tMutliThreadChannelSocket listen '%s'\n",this.connectionString);
         this.selector = Selector.open();
         this.serverSocketChannel = ServerSocketChannel.open();
         this.serverSocketChannel.configureBlocking(false);
