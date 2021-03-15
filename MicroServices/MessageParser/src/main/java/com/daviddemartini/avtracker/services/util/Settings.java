@@ -1,6 +1,7 @@
 package com.daviddemartini.avtracker.services.util;
 
 
+import java.util.Locale;
 import java.util.Map;
 
 public class Settings  {
@@ -8,6 +9,7 @@ public class Settings  {
     protected Settings systemEnv;
     protected String publisherHostname = "localhost";
     protected String dump1090Hostname  = "localhost";
+    protected String resolution = "all";
     protected int dump1090Port = 30003;
     protected Double fixedPositionLatitude;
     protected Double fixedPositionLongitude;
@@ -32,6 +34,8 @@ public class Settings  {
                 ? Double.parseDouble(systemEnv.get("MILTRACK_FIXED_LONGITUDE").trim()) : null;
         maxDetectionRange = (systemEnv.containsKey("MILTRACK_MAX_DETECTION_RANGE"))
                 ? Double.parseDouble(systemEnv.get("MILTRACK_MAX_DETECTION_RANGE").trim()) : maxDetectionRange;
+        resolution = (systemEnv.containsKey("MILTRACK_RESOLUTION"))
+                ? systemEnv.get("MILTRACK_RESOLUTION").toLowerCase().trim() : resolution;
     }
 
     public Settings getSystemEnv() {
@@ -76,6 +80,10 @@ public class Settings  {
 
     public Double getMaxDetectionRange() {
         return maxDetectionRange;
+    }
+
+    public String getResolution() {
+        return resolution;
     }
 
 }

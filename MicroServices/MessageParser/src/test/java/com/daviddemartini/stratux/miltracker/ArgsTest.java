@@ -54,11 +54,12 @@ public class ArgsTest {
     void testArgs_AllArguments() throws Exception {
         System.out.println("\tArgument Parser - Maximum Arguments");
         // setup
-        String[] GOOD_WEBSOCKET_ARGS = new String[4];
+        String[] GOOD_WEBSOCKET_ARGS = new String[5];
         GOOD_WEBSOCKET_ARGS[0] = "--host=" + TEST_HOST;
         GOOD_WEBSOCKET_ARGS[1] = "--port=" + TEST_PORT;
         GOOD_WEBSOCKET_ARGS[2] = "--lat=" + TEST_LAT;
         GOOD_WEBSOCKET_ARGS[3] = "--lon=" + TEST_LON;
+        GOOD_WEBSOCKET_ARGS[4] = "--resolution=HiGh";
 
         // evaluate
         Args clArgs = new Args(GOOD_WEBSOCKET_ARGS);
@@ -66,6 +67,7 @@ public class ArgsTest {
         assertEquals(TEST_PORT, clArgs.getDump1090Port());
         assertEquals(TEST_LAT, clArgs.getFixedPositionLatitude());
         assertEquals(TEST_LON, clArgs.getFixedPositionLongitude());
+        assertEquals("high", clArgs.getResolution());
         assertFalse(clArgs.hasMilOnly());
         assertFalse(clArgs.hasQuiet());
 

@@ -3,20 +3,24 @@ package com.daviddemartini.avtracker.services;
 import com.daviddemartini.avtracker.services.comms.stratux.MutliThreadChannelSocket;
 import com.daviddemartini.avtracker.services.comms.stratux.SBSTrafficSocket;
 import com.daviddemartini.avtracker.services.datamodel.AircraftSBS;
+import com.daviddemartini.avtracker.services.datamodel.CacheManager;
 import com.daviddemartini.avtracker.services.geolocation.DistanceBearing;
 import com.daviddemartini.avtracker.services.util.Args;
+import org.apache.commons.cli.ParseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MessageParseService {
 
     // need a hash map of ICOA ID -> SBS Object
-    private static final Map<String, AircraftSBS> AirTraffic = new HashMap<>();
+    private static final Map<String, AircraftSBS> ActiveContacts = new HashMap<>();
     private static DistanceBearing distanceBearing = null;
+    private static int resolution = 10;
+    //private static long garbageCollectionInterval = 300000;  // run garbage collection every 5 min. (milisecons)
+    //private static long gcAgeOffset = 600000; // contacts over 10 min. old are removed (milisecons)
     private static double fixedPositionLatitude;
     private static double fixedPositionLongitude;
     private static double maxRange = 0; // 0 == unlimited range
@@ -31,7 +35,10 @@ public class MessageParseService {
         // process the CL args..
         try {
             // Process args from commandline
-            clArgs = new Args(args);
+            setupApplication(args);
+
+            // start thread (POC)
+            CacheManager cashbash = new CacheManager(ActiveContacts);
 
             // Setup stream reader
             SBSTrafficSocket sbsTrafficSocket = new SBSTrafficSocket(clArgs.getDump1090Hostname(), clArgs.getDump1090Port());
@@ -58,12 +65,43 @@ public class MessageParseService {
             PubEveryContact = new MutliThreadChannelSocket(clArgs.getPublisherHostname(),9105);
 
             // process traffic feed from  sbsTrafficSocket
-            processMessages(AirTraffic, sbsTrafficSocket);
+            processMessages(ActiveContacts, sbsTrafficSocket);
+
+            // shutdown the cachebasing
+            cashbash.shutdown();
 
         } catch (Exception e) {
             System.err.printf("\n** Fatal Error -- %s\n", e.toString());
             e.printStackTrace();
             System.exit(9);
+        }
+
+    }
+
+    /**
+     * Handle Application setup
+     *
+     * Compute resolution from settings, if provided
+     * @param args
+     * @throws ParseException
+     */
+    private static void setupApplication(String[] args) throws ParseException {
+        // store into args var
+        clArgs = new Args(args);
+
+        // setup the publishing resolution
+        switch(clArgs.getResolution()){
+            case "high":
+                resolution = 5;
+                break;
+            case "normal":
+                resolution = 10;
+            case "low":
+                resolution = 20;
+                break;
+            case "all":
+            default:
+                resolution = 0;
         }
 
     }
@@ -138,6 +176,7 @@ public class MessageParseService {
                     publishContact = false;
                 }
             } else {
+                contact.setResolution(resolution); // pass resolution granularity
                 airTraffic.put(icao, contact);
                 // it not operating in quiet mode, announce the new contact
                 if (!clArgs.hasQuiet()) {
@@ -172,10 +211,18 @@ public class MessageParseService {
 
     }
 
+    /**
+     * Announce contact to STDOUT
+     *
+     * This will work as preliminary data capture
+     * @param contact
+     */
     private static void Announce(AircraftSBS contact){
         if(contact.getCallsign() != null){
-            System.out.printf("\t\t%s\n", contact.announceContactTerse());
+            System.out.printf("\t\t%d : %s\n",ActiveContacts.size(), contact.announceContactTerse());
         }
     }
+
+
 
 }

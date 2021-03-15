@@ -34,7 +34,8 @@ toward determining distribution of callsigns and airframes observed, and which h
 | 12-MAR-2021 | d.demartini | Added capability to set Environment Variables to configure service |
 | 12-MAR-2021 | d.demartini | Added new port (9105) to publish all available data in real time |
 | 12-MAR-2021 | d.demartini | Docker enabled |
-
+| 14-MAR-2021 | d.demartini | Preliminary garbage collection to manage in-mem cache size |
+| 15-MAR-2021 | d.demartini | Preliminary resolution (low,normal,high,all) implemented to manage publisher volume |
 ----
 ## Other Information  
 ### What does the device running Dump1090 consist of?

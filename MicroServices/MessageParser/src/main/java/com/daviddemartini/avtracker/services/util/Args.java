@@ -8,6 +8,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 
+import java.util.Locale;
+
 public class Args extends Settings {
 
     private boolean hasLatitude = false;
@@ -62,15 +64,25 @@ public class Args extends Settings {
                 .hasArg()
                 .build());
 
+        options.addOption(Option.builder("y")
+                .longOpt("resolution")
+                .desc("Logging Resolution  All|High|Normal|Low")
+                .hasArg()
+                .build());
+
         options.addOption(Option.builder("m")
                 .longOpt("milonly")
                 .desc("Only log military contacts")
                 .build());
 
+
+
         options.addOption(Option.builder("q")
                 .longOpt("quiet")
                 .desc("Quieter operation - do not announce new contacts")
                 .build());
+
+
 
         // create the parser and the commadline interface
         CommandLineParser parser = new DefaultParser();
@@ -104,6 +116,9 @@ public class Args extends Settings {
         if (cmd.hasOption("quiet")) {
             // don't announce new contacts
             quiet = true;
+        }
+        if(cmd.hasOption("resolution")){
+            resolution = cmd.getOptionValue("resolution").toLowerCase().trim();
         }
 
     }

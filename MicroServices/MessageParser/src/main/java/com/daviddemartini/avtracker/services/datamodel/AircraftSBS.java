@@ -58,10 +58,15 @@ public class AircraftSBS {
     private Boolean emergency;
     private Boolean spiIdent;
     private Boolean onGround;
+
     // computed values not part of messages
     private Float distance;
     private Float bearing;
     private Boolean milCallsign;
+    // used for garbage collection
+    private long lastReport;
+    // turn up/down frequency of position updates to publishers
+    private int resolution;
 
     /**
      * Constructor
@@ -190,6 +195,8 @@ public class AircraftSBS {
                 }
             }
         }
+        // set lastReport long to enable garbage collection
+        this.lastReport = System.currentTimeMillis();
     }
 
     /**
@@ -356,19 +363,8 @@ public class AircraftSBS {
         return distance;
     }
 
-    /**
-     * ** SETTERS ***
-     */
-    public void setDistance(float distance) {
-        this.distance = distance;
-    }
-
-    public Float getBearing() {
-        return bearing;
-    }
-
-    public void setBearing(float bearing) {
-        this.bearing = bearing;
+    public long getLastReport(){
+        return lastReport;
     }
 
     public Boolean isMilCallsign() {
@@ -377,6 +373,25 @@ public class AircraftSBS {
 
     public boolean milContactTrue() {
         return (this.milCallsign != null && this.milCallsign.booleanValue());
+    }
+
+    public Float getBearing() {
+        return bearing;
+    }
+
+    /**
+     * ** SETTERS ***
+     */
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+
+    public void setBearing(float bearing) {
+        this.bearing = bearing;
+    }
+
+    public void setResolution(int resolution){
+        this.resolution = resolution;
     }
 }
 
