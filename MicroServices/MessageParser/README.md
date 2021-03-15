@@ -1,12 +1,12 @@
-# StratuxMilTracker
+# MessageParser - dump1090 Message Service 
 MicroService to parse Military callsigns from a Stratux hosted dump1090 service cluster 
 
 #### *Work in progress*
 
-## Stratux Mil Tracker Objectives 
+## Processor Objectives 
 Process data streamed from a Stratux ADS-B receiver to acheive the following objectives.
 * Identity all aircraft within 5 miles of Canyon Lake, feeding a dashboard displaying the current over-head aircraft.
-* Created a database of aircraft the frequent the Canyon Lake area (sightseeing), including type, elevation, speed. etc.
+* Facilitate creation of aircraft database to log aircraft that frequent the Canyon Lake area (sightseeing), including type, elevation, speed. etc.
 * Catalog which of the USAF Training Command aircraft are transiting the area, or using area for maneuvers, with an eye
 toward determining distribution of callsigns and airframes observed, and which hours they are typically overhead.
 * Collect range and bearing data to determine antenna location performance.
@@ -14,6 +14,7 @@ toward determining distribution of callsigns and airframes observed, and which h
 
 
 ## Usage
+Operating the MessageParser service
 
 ### Application parameters
 | Parameter | Environment Variable | Argument Type | Function |
@@ -105,7 +106,8 @@ You can easily varify connectivity and monitor output using `telnet`
 | 12-MAR-2021 | d.demartini | Added new port (9105) to publish all available data in real time |
 | 12-MAR-2021 | d.demartini | Docker enabled |
 | 14-MAR-2021 | d.demartini | Preliminary garbage collection to manage in-mem cache size |
-| 15-MAR-2021 | d.demartini | Preliminary resolution (low,normal,high,all) implemented to manage publisher volume |
+| 15-MAR-2021 | d.demartini | Threaded contact manager sweeps out old contacts (gc) from in-mem cache  |
+| 15-MAR-2021 | d.demartini | Threaded Console logging resolution option: (low,normal,high,all)  |
 
 ----
 

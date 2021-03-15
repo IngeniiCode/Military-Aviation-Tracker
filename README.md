@@ -35,10 +35,9 @@ toward determining distribution of callsigns and airframes observed, and which h
 | 12-MAR-2021 | d.demartini | Added new port (9105) to publish all available data in real time |
 | 12-MAR-2021 | d.demartini | Docker enabled |
 | 14-MAR-2021 | d.demartini | Preliminary garbage collection to manage in-mem cache size |
-| 15-MAR-2021 | d.demartini | Preliminary resolution (low,normal,high,all) implemented to manage publisher volume |
-/ 15-MAR-2021 / d.demartini / Threaded garbage collector removed aged contacts from contacts cache |
-
-
+| 15-MAR-2021 | d.demartini | Threaded contact manager sweeps out old contacts (gc) from in-mem cache   |
+| 15-MAR-2021 | d.demartini | Threaded Console logging resolution option: (low,normal,high,all)  |
+| 15-MAR-2021 / d.demartini / Threaded garbage collector removed aged contacts from contacts cache |
 
 ----
 ## Other Information  
