@@ -1,0 +1,6 @@
+[submodule "Search/SOLR-AviationSearch"]
+	path = Search/SOLR-AviationSearch
+	url = https://github.com/IngeniiCode/SOLR-AviationSearch.git
+[submodule "SOLR-AviationSearch"]
+	path = SOLR-AviationSearch
+	url = https://github.com/IngeniiCode/SOLR-AviationSearch.git
