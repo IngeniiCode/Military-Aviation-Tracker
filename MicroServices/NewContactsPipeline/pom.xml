@@ -10,13 +10,14 @@
         <version>0.1.0</version>
     </parent>
 
-    <groupId>com.daviddemartini.avtracker.services.message_parse_service</groupId>
-    <artifactId>MessageParseService</artifactId>
+    <groupId>com.daviddemartini.avtracker.services</groupId>
+    <artifactId>NewContactsPipeline</artifactId>
 
     <properties>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
         <myTarget>Java11</myTarget>
+
     </properties>
 
     <profiles>
@@ -82,7 +83,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.daviddemartini.avtracker.services.message_parse_service.MessageParseService</mainClass>
+                            <mainClass>com.daviddemartini.avtracker.services.new_contacts_pipeline.NewContactsPipeline</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

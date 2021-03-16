@@ -16,6 +16,7 @@
 
     <modules>
       <module>MessageParser</module>
+      <module>NewContactsPipeline</module>
     </modules>
 
 </project>
