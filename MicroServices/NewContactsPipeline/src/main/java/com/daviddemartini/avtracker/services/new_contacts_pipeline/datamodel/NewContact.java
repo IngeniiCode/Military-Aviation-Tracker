@@ -28,7 +28,7 @@ public class NewContact {
     // used for timestamping reports
     private long lastReport;
     // turn up/down frequency of position updates to publishers
-    private int resolution;
+    //private int resolution;
 
     /**
      * Constructor
@@ -137,12 +137,6 @@ public class NewContact {
     }
 
     /**
-     * Exposed method of setting flag indicating possible military callsign
-     *
-     * @param milCallsign
-     */
-
-    /**
      * ** GETTERS ***
      */
 
@@ -166,9 +160,9 @@ public class NewContact {
         return lastReport;
     }
 
-    public int getResolution() {
-        return resolution;
-    }
+    //public int getResolution() {
+    //    return resolution;
+    //}
 
     public Boolean isNewContact(){
         return newContact;
@@ -186,9 +180,9 @@ public class NewContact {
      * ** SETTERS ***
      */
 
-    public void setResolution(int resolution){
-        this.resolution = resolution;
-    }
+    //public void setResolution(int resolution){
+    //    this.resolution = resolution;
+    //}
 
     public void newContact(){
         this.newContact = true;

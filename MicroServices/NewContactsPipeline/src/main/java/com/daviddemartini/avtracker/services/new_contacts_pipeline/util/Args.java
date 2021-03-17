@@ -79,9 +79,6 @@ public class Args extends Settings {
         if (cmd.hasOption("solr-core")) {
             solrCollectionName = cmd.getOptionValue("solr-core");
         }
-        if (cmd.hasOption("resolution")) {
-            resolution = cmd.getOptionValue("resolution").toLowerCase().trim();
-        }
         if (cmd.hasOption("debug")) {
             debug = true;
         }
@@ -90,13 +87,6 @@ public class Args extends Settings {
         }
 
     }
-
-    /**
-     * Boolean test to see if the position values are valid, or NaNs
-     *
-     * @return
-     */
-
 
     /**
      * Boolean test to see if the display mil only flag has been set.

@@ -70,21 +70,6 @@ public class NewContactsPipeline {
 
         debug = clArgs.hasDebug();
 
-        // setup the publishing resolution
-        switch (clArgs.getResolution()) {
-            case "high":
-                resolution = 5;
-                break;
-            case "normal":
-                resolution = 10;
-            case "low":
-                resolution = 20;
-                break;
-            case "all":
-            default:
-                resolution = 0;
-        }
-
     }
 
 
@@ -124,7 +109,6 @@ public class NewContactsPipeline {
                     publishContact = false;
                 }
             } else {
-                contact.setResolution(resolution); // pass resolution granularity
                 contact.newContact(); // set flag that contact is new
                 airTraffic.put(icao, contact);
                 // it not operating in quiet mode, announce the new contact

@@ -8,7 +8,6 @@ public class Settings  {
     protected String dump1090Hostname  = "localhost";
     protected String solrHostname = "localhost";
     protected String solrCollectionName = "aviation_contacts";
-    protected String resolution = "all";
     protected int dump1090Port = 30003;
     protected int solrPort = 8983;
 
@@ -28,8 +27,6 @@ public class Settings  {
                 ? Integer.parseInt(System.getenv("MILTRACK_SOLR_PORT").trim()) : solrPort;
         solrCollectionName = (systemEnv.containsKey("MILTRACK_SOLR_CONTACT_COLLECTION"))
                 ? systemEnv.get("MILTRACK_SOLR_CONTACT_COLLECTION").trim() : solrCollectionName;
-        resolution = (systemEnv.containsKey("MILTRACK_RESOLUTION"))
-                ? systemEnv.get("MILTRACK_RESOLUTION").toLowerCase().trim() : resolution;
     }
 
     /**
@@ -48,10 +45,6 @@ public class Settings  {
 
     public String getSolrCollectionName() {
         return solrCollectionName;
-    }
-
-    public String getResolution() {
-        return resolution;
     }
 
     public int getDump1090Port() {

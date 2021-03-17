@@ -5,18 +5,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-	<groupId>com.daviddemartini.avtracker</groupId>
+        <groupId>com.daviddemartini.avtracker</groupId>
         <artifactId>Aviation-Tracker</artifactId>
         <version>0.1.0</version>
-   </parent>
+    </parent>
 
     <groupId>com.daviddemartini.avtracker.microservice</groupId>
     <artifactId>MicroServices</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-      <module>MessageParser</module>
-      <module>NewContactsPipeline</module>
+        <module>MessageParser</module>
+        <module>NewContactsPipeline</module>
+        <module>FAA-ModelReference</module>
     </modules>
 
 </project>

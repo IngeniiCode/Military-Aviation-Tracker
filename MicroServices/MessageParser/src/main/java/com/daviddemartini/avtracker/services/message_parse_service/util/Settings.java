@@ -1,5 +1,11 @@
 package com.daviddemartini.avtracker.services.message_parse_service.util;
-
+/**
+ * Message Parsing Service Base Settings
+ *
+ * Package sets minimum configuration default values,
+ * and uses environment variables for update, when set
+ *
+ */
 
 import java.util.Map;
 
@@ -37,6 +43,10 @@ public class Settings  {
                 ? systemEnv.get("MILTRACK_RESOLUTION").toLowerCase().trim() : resolution;
     }
 
+    /**
+     *  *** GETTERS ***
+     */
+
     public Settings getSystemEnv() {
         return systemEnv;
     }
@@ -45,11 +55,6 @@ public class Settings  {
         return publisherHostname;
     }
 
-    /**
-     * get the socket hostname
-     *
-     * @return
-     */
     public String getDump1090Hostname() throws Exception {
         if(this.dump1090Hostname != null) {
             return dump1090Hostname;
@@ -60,11 +65,6 @@ public class Settings  {
         }
     }
 
-    /**
-     * get the socket port
-     *
-     * @return
-     */
     public int getDump1090Port(){
         return dump1090Port;
     }

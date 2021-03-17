@@ -2,6 +2,7 @@ package com.daviddemartini.avtracker.services.message_parse_service.util;
 
 import org.apache.commons.cli.*;
 
+
 public class Args extends Settings {
 
     private boolean hasLatitude = false;
