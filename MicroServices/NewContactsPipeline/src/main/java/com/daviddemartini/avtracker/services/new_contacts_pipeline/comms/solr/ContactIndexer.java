@@ -1,12 +1,13 @@
 package com.daviddemartini.avtracker.services.new_contacts_pipeline.comms.solr;
 
 import com.daviddemartini.avtracker.services.new_contacts_pipeline.datamodel.NewContact;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Iterator;
-import java.util.Map;
+import java.time.Duration;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,21 +20,25 @@ public class ContactIndexer {
 
     private static Map<String, NewContact> constactsCache;
     private static Runnable contactPublisher;
-    private static String solrCollection;
+    private static String solrIndexer;
     private static URI solrURI;
     private volatile boolean shutdown = false;
+    private static boolean dryrun = false;
     private static final int commitWithin = 500;
+    private static final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
 
     public ContactIndexer(Map<String, NewContact> constactsCache, String solrHostname, int solrPort, String solrCollection) {
         // save cache pointer
         this.constactsCache = constactsCache;
-        this.solrCollection = String.format("%s:%d/solr/%s", solrHostname, solrPort, solrCollection);
-        String solrUpdate = String.format("http://%s/update?_=1615905561560&commitWithin=%d&overwrite=false&wt=json",
-                solrCollection,
-                commitWithin);
+        this.solrIndexer = String.format("%s:%d/solr/%s", solrHostname, solrPort, solrCollection);
 
         try {
-            solrURI = new URI(solrUpdate);
+            solrURI = new URI(String.format("http://%s/update?_=1615905561560&commitWithin=%d&overwrite=false&wt=json",
+                    solrIndexer,
+                    commitWithin));
 
             // runnable thread wrapper
             contactPublisher = new Runnable() {
@@ -58,10 +63,11 @@ public class ContactIndexer {
 
         try {
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-            executor.scheduleAtFixedRate(contactPublisher, 1, 5, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(contactPublisher, 5, 10, TimeUnit.SECONDS);
         } catch (Exception e) {
             System.err.println("runContactPublisher EXCEPTION: " + e.getCause().getMessage());
         }
+
     }
 
     /**
@@ -71,21 +77,48 @@ public class ContactIndexer {
 
         // Iterate over all the elements
         try {
-            Iterator<String> contactIterator = constactsCache.keySet().iterator();
-            while (contactIterator.hasNext()) {
-                String icoaId = contactIterator.next();
-                NewContact contact = constactsCache.get(icoaId);
-                if (contact.isNewContact()) {
-                    // check to see if it has a Callsign set
-                    if (contact.hasCallsign()) {
-                        // publish
-                        System.out.println("NEW: " + contact.toJSONLite());
-                        postToSolr(contact.toJSONLite());
-                        constactsCache.get(icoaId).clearNewContact();
-                    }
+            //String[] contacts = constactsCache.keySet().toArray(new String[constactsCache.size()]);
+            System.out.printf("Checking cache [%d] for new contacts",constactsCache.size());
+            Map<String,String> newContacts = new HashMap<>();
 
+            // loop through list of strings
+            for(String icaoId: constactsCache.keySet().toArray(new String[constactsCache.size()])){
+                // verify that contact has not been cachebashed before attempting to index
+                if(constactsCache.containsKey(icaoId)) {
+                    NewContact contact = constactsCache.get(icaoId);
+                    if (contact.isNewContact()) {
+                        // check to see if it has a Callsign set
+                        if (contact.hasCallsign()) {
+                            // add to document stack
+                            newContacts.put(icaoId,contact.toJSONLite());
+                        }
+                    }
                 }
             }
+
+            // check to see if any new contacts need to be published
+            if(newContacts.size() > 0){
+                System.out.printf("\t%d New Contacts\n",newContacts.size());
+                StringJoiner solrDocs = new StringJoiner(",");
+                // build document
+                for(String icaoId: newContacts.keySet().toArray(new String[newContacts.size()])){
+                    System.out.printf(" ++ NEW:  %s\n",newContacts.get(icaoId).toString());
+                    solrDocs.add(newContacts.get(icaoId));
+                }
+                // clear the docs
+                if(postToSolr(solrDocs.toString())){
+                    for(String icaoId: newContacts.keySet().toArray(new String[newContacts.size()])){
+                        if (constactsCache.containsKey(icaoId)) {
+                            constactsCache.get(icaoId).clearNewContact();
+                        }
+                    }
+                }
+            }
+            else {
+                // no new contacts to record
+                System.out.printf("\n"); // closes open printf
+            }
+
         } catch (Exception e) {
             // ToDo -- improve exception handing here
             System.err.println("publishNewContacts EXCEPTION: " + e.getCause().getMessage());
@@ -95,31 +128,48 @@ public class ContactIndexer {
     /**
      * Post to the Solr Collection
      *
-     * @param Json
+     * @param solrDocs
      */
-    private static void postToSolr(String Json) {
+    private static boolean postToSolr(String solrDocs) {
 
         try {
-            String reformatted = String.format("[%s]", Json);
-            HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(reformatted);
-            HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().POST(bodyPublisher);
-            requestBuilder.uri(solrURI);
-            // add headers
-            requestBuilder.header("User-Agent", "IngeniiGroup Contacts Publisher");
-            requestBuilder.setHeader("Content-Type", "application/json");
-            // build
-            HttpRequest request = requestBuilder.build();
-            // post data to solr
-            HttpClient httpClient = HttpClient.newHttpClient();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) {
-                String badResonse = String.format("ERR-CODE:%d Failed to Index @ %s", response.statusCode(), solrCollection);
-                System.err.println(badResonse);
+
+            // if dry run flag set, perform all operations except post to Solr.
+            if(dryrun){
+                System.out.println("\n** DR ** " + solrDocs);
+                return true;
             }
+
+            String reformatted = String.format("[%s]", solrDocs);
+            HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(reformatted);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .POST(bodyPublisher)
+                    .uri(solrURI)
+                    .setHeader("User-Agent", "IngeniiGroup Contacts Publisher") // add request header
+                    .header("Content-Type", "application/json")
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) {
+                String badResonse = String.format("ERR-CODE:%d Failed to Index @ %s", response.statusCode(), solrIndexer);
+                System.err.println(badResonse);
+                return false;
+            }
+
+            // good indexing operation
+            return true;
+
         } catch (Exception e) {
-            System.err.printf("Failed to Index @ %s  -- %s\n", solrCollection, e.getMessage());
+            System.err.printf("Failed to Index @ %s  -- %s\n", solrIndexer, e.getMessage());
+            return false;
         }
 
+    }
+
+    public void dryRun(){
+        this.dryrun = true;
     }
 
     // shutdown hook

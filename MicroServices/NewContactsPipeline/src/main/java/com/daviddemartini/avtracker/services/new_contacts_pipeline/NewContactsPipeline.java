@@ -35,6 +35,9 @@ public class NewContactsPipeline {
 
             // start the Solr publishing thread
             ContactIndexer indexer = new ContactIndexer(ActiveContacts,clArgs.getSolrHostname(), clArgs.getSolrPort(), clArgs.getSolrCollectionName());
+            if(clArgs.hasDryRun()){
+                indexer.dryRun();
+            }
 
             // Setup stream reader
             SBSTrafficSocket sbsTrafficSocket = new SBSTrafficSocket(clArgs.getDump1090Hostname(), clArgs.getDump1090Port());

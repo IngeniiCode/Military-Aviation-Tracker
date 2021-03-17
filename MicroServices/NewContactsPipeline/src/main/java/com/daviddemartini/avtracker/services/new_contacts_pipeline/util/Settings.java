@@ -26,8 +26,8 @@ public class Settings  {
                 ? systemEnv.get("MILTRACK_SOLR_HOST").trim() : solrHostname;
         solrPort = (systemEnv.containsKey("MILTRACK_SOLR_PORT"))
                 ? Integer.parseInt(System.getenv("MILTRACK_SOLR_PORT").trim()) : solrPort;
-        solrCollectionName = (systemEnv.containsKey("MILTRACK_SOLR_COLLECTION"))
-                ? systemEnv.get("MILTRACK_SOLR_COLLECTION").trim() : solrCollectionName;
+        solrCollectionName = (systemEnv.containsKey("MILTRACK_SOLR_CONTACT_COLLECTION"))
+                ? systemEnv.get("MILTRACK_SOLR_CONTACT_COLLECTION").trim() : solrCollectionName;
         resolution = (systemEnv.containsKey("MILTRACK_RESOLUTION"))
                 ? systemEnv.get("MILTRACK_RESOLUTION").toLowerCase().trim() : resolution;
     }

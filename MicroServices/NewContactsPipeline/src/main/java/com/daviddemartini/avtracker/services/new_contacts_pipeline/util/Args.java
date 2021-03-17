@@ -5,6 +5,7 @@ import org.apache.commons.cli.*;
 public class Args extends Settings {
 
     private boolean debug = false;
+    private boolean dryrun = false;
 
     /**
      * Constructor
@@ -47,10 +48,16 @@ public class Args extends Settings {
                 .hasArg()
                 .build());
 
-        options.addOption(Option.builder("g")
+        options.addOption(Option.builder("f")
                 .longOpt("debug")
                 .desc("Dump all contacts to STDOUT for debugging")
                 .build());
+
+        options.addOption(Option.builder("g")
+                .longOpt("dryrun")
+                .desc("Perform all operations except post to Solr")
+                .build());
+
 
         // create the parser and the commadline interface
         CommandLineParser parser = new DefaultParser();
@@ -75,6 +82,12 @@ public class Args extends Settings {
         if (cmd.hasOption("resolution")) {
             resolution = cmd.getOptionValue("resolution").toLowerCase().trim();
         }
+        if (cmd.hasOption("debug")) {
+            debug = true;
+        }
+        if (cmd.hasOption("dryrun")) {
+            dryrun = true;
+        }
 
     }
 
@@ -94,4 +107,7 @@ public class Args extends Settings {
     public boolean hasDebug() {
         return debug;
     }
+
+    public boolean hasDryRun() { return dryrun; }
+
 }
