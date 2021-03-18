@@ -5,7 +5,6 @@ import com.daviddemartini.avtracker.services.faa.model_reference.datamodel.Aircr
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AircraftDataset {
 

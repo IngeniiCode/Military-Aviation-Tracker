@@ -1,4 +1,4 @@
-package com.daviddemartini.avtracker.services.faa.model_reference;
+package com.daviddemartini.avtracker.faa_datamodel.weight_class;
 
 import com.daviddemartini.avtracker.faa_datamodel.weight_class.WeightClass;
 import org.junit.jupiter.api.DisplayName;

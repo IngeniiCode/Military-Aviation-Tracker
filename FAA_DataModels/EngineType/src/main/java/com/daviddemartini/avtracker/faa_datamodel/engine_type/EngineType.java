@@ -1,4 +1,4 @@
-package com.daviddemartini.avtracker.services.faa.model_reference.datamodel;
+package com.daviddemartini.avtracker.faa_datamodel.engine_type;
 
 import java.util.HashMap;
 import java.util.Map;

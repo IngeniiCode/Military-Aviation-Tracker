@@ -1,6 +1,4 @@
-package com.daviddemartini.avtracker.services.faa.model_reference.datamodel;
-
-import com.daviddemartini.avtracker.services.faa.model_reference.datamodel.util.StaticModel;
+package com.daviddemartini.avtracker.faa_datamodel.weight_class;
 
 import javax.inject.Singleton;
 import java.lang.annotation.Inherited;

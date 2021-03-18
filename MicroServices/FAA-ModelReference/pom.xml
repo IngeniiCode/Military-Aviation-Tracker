@@ -17,8 +17,36 @@
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
         <myTarget>Java11</myTarget>
-
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.daviddemartini.avtracker.faa_datamodel.engine_type</groupId>
+            <artifactId>FAA_EngineType</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.daviddemartini.avtracker.faa_datamodel.aircraft_type</groupId>
+            <artifactId>FAA_AircraftType</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.daviddemartini.avtracker.faa_datamodel.category_code</groupId>
+            <artifactId>FAA_CategoryCode</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.daviddemartini.avtracker.faa_datamodel.type_certification_code</groupId>
+            <artifactId>FAA_TypeCertificationCode</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.daviddemartini.avtracker.faa_datamodel.weight_class</groupId>
+            <artifactId>FAA_WeightClass</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+
+    </dependencies>
 
     <profiles>
 

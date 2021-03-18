@@ -1,8 +1,11 @@
 package com.daviddemartini.avtracker.services.faa.model_reference.datamodel;
 
+import com.daviddemartini.avtracker.faa_datamodel.aircraft_type.AircraftType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.math3.optim.InitialGuess;
+import com.daviddemartini.avtracker.faa_datamodel.engine_type.EngineType;
+import com.daviddemartini.avtracker.faa_datamodel.category_code.CategoryCode;
 
 import java.io.IOException;
 import java.util.Arrays;

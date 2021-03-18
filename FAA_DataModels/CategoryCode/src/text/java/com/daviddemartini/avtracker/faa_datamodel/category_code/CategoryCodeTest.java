@@ -1,4 +1,4 @@
-package com.daviddemartini.avtracker.services.faa.model_reference;
+package com.daviddemartini.avtracker.faa_datamodel/category_code;
 
 import com.daviddemartini.avtracker.faa_datamodel.category_code.CategoryCode;
 import org.junit.jupiter.api.DisplayName;

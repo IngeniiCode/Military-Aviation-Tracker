@@ -1,4 +1,4 @@
-package com.daviddemartini.avtracker.services.faa.model_reference;
+package com.daviddemartini.avtracker.faa_datamodel.type_certification_code;
 
 
 import com.daviddemartini.avtracker.faa_datamodel.type_certification_code.TypeCertificationCode;

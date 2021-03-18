@@ -1,4 +1,4 @@
-package com.daviddemartini.avtracker.services.faa.model_reference;
+package com.daviddemartini.avtracker.faa_datamodel.engine_type;
 
 import com.daviddemartini.avtracker.faa_datamodel.engine_type.EngineType;
 import org.junit.jupiter.api.DisplayName;
