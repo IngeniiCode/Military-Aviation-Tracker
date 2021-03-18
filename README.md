@@ -33,6 +33,10 @@ Airframe and manufacture data from the FAA Releasable registartion database (ava
 * Parse of CSV file containing aircraft model and manufacture details, tied with a proprietary FAA record ID.
 * [Service details](./MicroServices/FAA-ModelReference/README.md)
 
+### FAA Data Models  
+Catalog of reusable FAA Data lookup models.  
+[FAA Data Model Modules](./FAA_DataModels/README.md)
+
 
 ----
 ## Change Log
