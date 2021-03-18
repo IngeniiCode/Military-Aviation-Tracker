@@ -1,22 +1,22 @@
 package com.daviddemartini.avtracker.services.faa.model_reference;
 
-import com.daviddemartini.avtracker.services.faa.model_reference.datamodel.AircraftModel;
+import com.daviddemartini.avtracker.services.faa.model_reference.data.AircraftDataset;
+import com.daviddemartini.avtracker.services.faa.model_reference.handler.JSON;
+import com.daviddemartini.avtracker.services.faa.model_reference.server.AppServer;
 import com.daviddemartini.avtracker.services.faa.model_reference.util.Args;
 import org.apache.commons.cli.ParseException;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * FAA Sourced Aircraft Model Map
  */
 public class ModelReference {
 
-	private static final Map<String, AircraftModel> AircraftModel = new HashMap<>();
 	private static Args clArgs;
 	private static String publisherHost;
 	private static int publisherPort;
 	private static String faaAircraftModelFile;
+	private static AppServer Server;
 
 	public static void main(String[] args){
 
@@ -26,9 +26,16 @@ public class ModelReference {
 			setupApplication(args);
 
 			System.out.println("\nFAA Model Database");
-			System.out.println("\tInput file :" + faaAircraftModelFile);
-			System.out.println("\tService Hostname: " + publisherHost);
-			System.out.println("\tService Port: " + publisherPort);
+			String dataFileLocation = String.format("%s/%s",System.getProperty("user.dir"),faaAircraftModelFile);
+
+			AircraftDataset aircraftDataset = new AircraftDataset(dataFileLocation);
+
+			// Setup REST API routes
+			Server = new AppServer(publisherHost,publisherPort);
+			Server.addHandler("/json", new JSON(aircraftDataset));
+
+			// Start server
+			Server.start();
 
 		}
 		catch (Exception e){

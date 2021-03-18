@@ -1,7 +1,7 @@
 package com.daviddemartini.avtracker.services.faa.model_reference.util;
 
+import com.daviddemartini.avtracker.services.faa.model_reference.util.Settings;
 import org.apache.commons.cli.*;
-
 
 public class Args extends Settings {
 

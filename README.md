@@ -12,12 +12,29 @@ toward determining distribution of callsigns and airframes observed, and which h
 * Collect range and bearing data to determine antenna location performance.
 * Enable detection of rapidly approaching low-altitude aircraft (e.g. high-speed T38's) to improve success in photographing aircraft.
 
+---- 
 ## Project Components  
 ### Micro Services
- * MessageParser - Dump1090 BaseStation Broadcast (BSB) message processor  
-   * publishes data on ports  9101 -> 9105
-   * [Service details](./MicroServices/MessageParser/README.md) 
 
+#### MessageParseService  
+Message Parse Service is a Dump1090 BaseStation Broadcast (BSB) message processor
+ * publishes data on ports  9101 -> 9105
+ * [Service details](./MicroServices/MessageParser/README.md) 
+
+#### NewContactsPipeline
+New Contacts reporting and publishing service
+ * Captures basic contact information, caches in memory until contact has not reported in at least 5 min.
+ * As soon as minimum required data has been parsed (requires ADS-B messages), a thread groups contacts completed since last cycle,
+generates an array of data objects in Json format, which are then submitted to a Solr service for indexing.
+ * [Service details](./MicroServices/NewContactsPipeline/README.md)
+
+#### ModelReference   
+Airframe and manufacture data from the FAA Releasable registartion database (available daily) [FAA Data Documentation PDF](./Artifacts/FAA_Aircraft_DataFile_Documentation.pdf)
+* Parse of CSV file containing aircraft model and manufacture details, tied with a proprietary FAA record ID.
+* [Service details](./MicroServices/FAA-ModelReference/README.md)
+
+
+----
 ## Change Log
 | Updated | Author | Comments |
 | --- | --- |--- |
@@ -37,7 +54,9 @@ toward determining distribution of callsigns and airframes observed, and which h
 | 14-MAR-2021 | d.demartini | Preliminary garbage collection to manage in-mem cache size |
 | 15-MAR-2021 | d.demartini | Threaded contact manager sweeps out old contacts (gc) from in-mem cache   |
 | 15-MAR-2021 | d.demartini | Threaded Console logging resolution option: (low,normal,high,all)  |
-| 15-MAR-2021 / d.demartini / Threaded garbage collector removed aged contacts from contacts cache |
+| 15-MAR-2021 | d.demartini | Threaded garbage collector removed aged contacts from contacts cache |
+| 16-MAR-2021 | d.demartini | New Contact Indexer service added; posts new contact information to Solr for search and other analytics [more info.](./MicroServices/NewContactsPipeline/README.md)|
+| 17-MAR-2021 | d.demartini | Started REST API service for model and mfg. data [more info.](./MicroServices/FAA-ModelReference/README.md) | 
 
 ----
 ## Other Information  

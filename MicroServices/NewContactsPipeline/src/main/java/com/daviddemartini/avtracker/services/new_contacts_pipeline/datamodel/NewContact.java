@@ -23,12 +23,14 @@ public class NewContact {
     private String callsign;
     private Boolean milCallsign;
     private String detectedTimestamp;
+    private String manufacture;
+    private String model;
     private final SimpleDateFormat dateFormatSolr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private Boolean newContact;
     // used for timestamping reports
     private long lastReport;
-    // turn up/down frequency of position updates to publishers
-    //private int resolution;
+    // flag to run aquire aircraft model/type
+    private Boolean needsAircraftModel;
 
     /**
      * Constructor
@@ -148,6 +150,14 @@ public class NewContact {
         return callsign;
     }
 
+    public String getManufacture() {
+        return manufacture;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
     public Boolean getMilCallsign() {
         return milCallsign;
     }
@@ -160,29 +170,25 @@ public class NewContact {
         return lastReport;
     }
 
-    //public int getResolution() {
-    //    return resolution;
-    //}
-
     public Boolean isNewContact(){
         return newContact;
     }
 
     public boolean milContactTrue() {
-        return (this.milCallsign != null && this.milCallsign.booleanValue());
+        return (this.milCallsign != null && this.milCallsign);
     }
 
     public boolean hasCallsign() {
         return (this.callsign != null);
     }
 
+    public boolean hasModelInformation() {
+        return (!needsAircraftModel);  // OK, looks odd but returns True if *not* needing aircraft model info
+    }
+
     /**
      * ** SETTERS ***
      */
-
-    //public void setResolution(int resolution){
-    //    this.resolution = resolution;
-    //}
 
     public void newContact(){
         this.newContact = true;
@@ -191,7 +197,6 @@ public class NewContact {
     public void clearNewContact(){
         this.newContact = false;
     }
-
 
 }
 

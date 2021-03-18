@@ -2,9 +2,9 @@ package com.daviddemartini.avtracker.services.faa.model_reference.datamodel;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.math3.optim.InitialGuess;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,8 +16,12 @@ import java.util.List;
 
 public class AircraftModel {
 
-    private long faaModelId;
-
+    private String faaModelId;
+    private String manufacture;
+    private String model;
+    private String type;
+    private String engine;
+    private String category;
 
     /**
      * Constructor
@@ -29,55 +33,47 @@ public class AircraftModel {
      */
     public AircraftModel(String message) {
         // execute merge operation
-        this.merge(message);
-    }
-
-    public AircraftModel() { }
-
-    /**
-     * Merge dump1090 data message into object.
-     *
-     * @param message
-     */
-    public void merge(String message) {
-        // parse the message into the fields
-        merge(Arrays.asList(message.split(",")));
-    }
-
-    public void merge(AircraftModel aircraftModel) {
-        // verify objects are the same, otherwise exit
-        assert this.getClass().getName().equals(aircraftModel.getClass().getName());
-        // iterate the fields and replace when not null
-        for (Field field : this.getClass().getDeclaredFields()) {
-            for (Field newField : aircraftModel.getClass().getDeclaredFields()) {
-                if (field.getName().equals(newField.getName())) {
-                    try {
-                        field.set(this, newField.get(aircraftModel) == null ? field.get(this) : newField.get(aircraftModel));
-                    } catch (IllegalAccessException ignore) {
-                        //ignore.printStackTrace();
-                    }
-                }
-            }
-        }
+        this.load(message);
     }
 
     /**
      * Merge dump1090 pre-parsed list of fields
      *
-     * @param parsedFields - pre-parsed list of Strings
+     * @param message - CSV string of model data
      */
-    public void merge(List<String> parsedFields) {
+    public void load(String message) {
+
+        // split on CSV marker
+        List<String> parsedFields = Arrays.asList(message.split(","));
 
         // iterate the parsed fields
         for (int fieldNum = 0; fieldNum < parsedFields.size(); fieldNum++) {
             String fieldVal = parsedFields.get(fieldNum).trim();
             if (fieldVal != null && !fieldVal.trim().isEmpty()) {
                 switch (fieldNum) {
-
+                    case 0:
+                        faaModelId = fieldVal;
+                        break;
+                    case 1:
+                        manufacture = fieldVal;
+                        break;
+                    case 2:
+                        model = fieldVal;
+                        break;
+                    case 3:
+                        type = AircraftType.get(fieldVal);
+                        break;
+                    case 4:
+                        engine = EngineType.get(fieldVal);
+                        break;
+                    case 5:
+                        category = CategoryCode.get(fieldVal);
+                        break;
+                    default:
+                        // not used at this time
                 }
             }
         }
-
     }
 
     /**
@@ -105,11 +101,33 @@ public class AircraftModel {
         return mapper.writeValueAsString(this);
     }
 
-
     /**
-     * ** GETTERS ***
+     *  *** GETTERS ***
      */
 
+    public String getFaaModelId() {
+        return faaModelId;
+    }
+
+    public String getManufacture() {
+        return manufacture;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getEngine() {
+        return engine;
+    }
+
+    public String getCategory() {
+        return category;
+    }
 
 }
 

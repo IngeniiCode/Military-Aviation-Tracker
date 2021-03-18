@@ -2,7 +2,6 @@ package com.daviddemartini.avtracker.services.faa.model_reference.util;
 
 import java.util.Map;
 
-
 public class Settings {
 
     protected Settings systemEnv;
