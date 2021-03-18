@@ -21,6 +21,7 @@
 	<module>TypeCertificationCode</module>
 	<module>WeightClass</module>
 	<module>RegistrantType</module>
+	<module>RegistrantRegion</module>
     </modules>
 
 </project>
