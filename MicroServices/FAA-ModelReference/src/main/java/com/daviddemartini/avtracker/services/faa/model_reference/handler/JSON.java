@@ -1,7 +1,6 @@
 package com.daviddemartini.avtracker.services.faa.model_reference.handler;
 
 import com.daviddemartini.avtracker.services.faa.model_reference.data.AircraftDataset;
-import com.daviddemartini.avtracker.services.faa.model_reference.datamodel.AircraftModel;
 import com.daviddemartini.avtracker.services.faa.model_reference.server.RequestHandler;
 import com.sun.net.httpserver.HttpExchange;
 

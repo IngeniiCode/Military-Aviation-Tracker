@@ -1,6 +1,6 @@
 package com.daviddemartini.avtracker.services.faa.model_reference;
 
-import com.daviddemartini.avtracker.faa_datamodel.aircraft_type.AircraftType;
+import com.daviddemartini.avtracker.datamodels.faa.aircraft_type.AircraftType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;

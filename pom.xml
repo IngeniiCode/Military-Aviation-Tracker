@@ -17,7 +17,7 @@
 
     <modules>
       <module>MicroServices</module>
-      <module>FAA_DataModels</module>
+      <module>DataModels</module>
     </modules>
 
     <dependencies>
