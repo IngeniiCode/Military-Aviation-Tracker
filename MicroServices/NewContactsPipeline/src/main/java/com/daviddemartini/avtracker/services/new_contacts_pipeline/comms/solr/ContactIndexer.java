@@ -31,9 +31,13 @@ public class ContactIndexer {
             .build();
 
     public ContactIndexer(Map<String, NewContact> constactsCache, String solrHostname, int solrPort, String solrCollection) {
+        new ContactIndexer(constactsCache, solrHostname, solrPort, solrCollection,false);
+    }
+    public ContactIndexer(Map<String, NewContact> constactsCache, String solrHostname, int solrPort, String solrCollection, boolean dryrun) {
         // save cache pointer
         this.constactsCache = constactsCache;
         this.solrIndexer = String.format("%s:%d/solr/%s", solrHostname, solrPort, solrCollection);
+        this.dryrun = dryrun;
 
         try {
             solrURI = new URI(String.format("http://%s/update?_=1615905561560&commitWithin=%d&overwrite=false&wt=json",

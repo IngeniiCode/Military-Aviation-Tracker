@@ -12,8 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * New Contact object is based upon the MSG and other feed data
- * parsed from one of the following exemplar message strings
+ * Aircraft model to map faa modelID to usable text such as the manufature and model of
+ * aircraft, as well a some other interesting bits of information such as engine type, count
+ * and category of craft (land, sea, etc.)
  *
  */
 
@@ -25,6 +26,8 @@ public class AircraftModel {
     private String type;
     private String engine;
     private String category;
+    // non-model elements
+    ObjectMapper objectMapper;
 
     /**
      * Constructor
@@ -35,6 +38,8 @@ public class AircraftModel {
      * @param message - dump1090 port 30003 message
      */
     public AircraftModel(String message) {
+        // instanciate object mapper
+        objectMapper = new ObjectMapper();
         // execute merge operation
         this.load(message);
     }
@@ -46,36 +51,41 @@ public class AircraftModel {
      */
     public void load(String message) {
 
-        // split on CSV marker
-        List<String> parsedFields = Arrays.asList(message.split(","));
+        try {
+            // split on CSV marker
+            List<String> parsedFields = Arrays.asList(message.split(","));
 
-        // iterate the parsed fields
-        for (int fieldNum = 0; fieldNum < parsedFields.size(); fieldNum++) {
-            String fieldVal = parsedFields.get(fieldNum).trim();
-            if (fieldVal != null && !fieldVal.trim().isEmpty()) {
-                switch (fieldNum) {
-                    case 0:
-                        faaModelId = fieldVal;
-                        break;
-                    case 1:
-                        manufacture = fieldVal;
-                        break;
-                    case 2:
-                        model = fieldVal;
-                        break;
-                    case 3:
-                        type = AircraftType.get(fieldVal);
-                        break;
-                    case 4:
-                        engine = EngineType.get(fieldVal);
-                        break;
-                    case 5:
-                        category = CategoryCode.get(fieldVal);
-                        break;
-                    default:
-                        // not used at this time
+            // iterate the parsed fields
+            for (int fieldNum = 0; fieldNum < parsedFields.size(); fieldNum++) {
+                String fieldVal = parsedFields.get(fieldNum).trim();
+                if (fieldVal != null && !fieldVal.trim().isEmpty()) {
+                    switch (fieldNum) {
+                        case 0:
+                            faaModelId = fieldVal;
+                            break;
+                        case 1:
+                            manufacture = fieldVal;
+                            break;
+                        case 2:
+                            model = fieldVal;
+                            break;
+                        case 3:
+                            type = AircraftType.get(fieldVal);
+                            break;
+                        case 4:
+                            engine = EngineType.get(fieldVal);
+                            break;
+                        case 5:
+                            category = CategoryCode.get(fieldVal);
+                            break;
+                        default:
+                            // not used at this time
+                    }
                 }
             }
+        }
+        catch (Exception e){
+            System.err.printf("Message parsing exception %s occured in [%s]\n",e.getMessage(),message);
         }
     }
 
@@ -86,8 +96,7 @@ public class AircraftModel {
      */
     public String toJSON() throws IOException {
         // convert this data object to JSON
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(this);
+        return objectMapper.writeValueAsString(this);
     }
 
     /**
@@ -98,10 +107,9 @@ public class AircraftModel {
      * @throws IOException
      */
     public String toJSONLite() throws IOException {
-        // convert this data object to JSON
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
-        return mapper.writeValueAsString(this);
+        // convert this data object to JSON, without any null fields
+        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+        return objectMapper.writeValueAsString(this);
     }
 
     /**
