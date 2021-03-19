@@ -1,6 +1,6 @@
 package com.daviddemartini.avtracker.services.faa.model_reference.data;
 
-import com.daviddemartini.avtracker.services.faa.model_reference.datamodel.AircraftModel;
+import com.daviddemartini.avtracker.datamodels.ig.aircraft_model.AircraftModel;
 
 import java.io.*;
 import java.util.HashMap;

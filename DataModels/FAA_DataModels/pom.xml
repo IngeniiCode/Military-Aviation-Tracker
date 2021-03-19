@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.daviddemartini.avtracker.datamodels</groupId>
+        <artifactId>DataModels</artifactId>
+        <version>0.1.0</version>
+    </parent>
+
+    <groupId>com.daviddemartini.avtracker.datamodels.faa</groupId>
+    <artifactId>FAA_DataModels</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+	<module>EngineType</module>
+	<module>AircraftType</module>
+	<module>CategoryCode</module>
+	<module>TypeCertificationCode</module>
+	<module>WeightClass</module>
+	<module>RegistrantType</module>
+	<module>RegistrantRegion</module>
+    </modules>
+
+</project>

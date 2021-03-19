@@ -21,31 +21,26 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.daviddemartini.avtracker.faa_datamodel.engine_type</groupId>
+            <groupId>com.daviddemartini.avtracker.datamodels.faa.engine_type</groupId>
             <artifactId>FAA_EngineType</artifactId>
             <version>0.1.0</version>
         </dependency>
         <dependency>
-            <groupId>com.daviddemartini.avtracker.faa_datamodel.aircraft_type</groupId>
+            <groupId>com.daviddemartini.avtracker.datamodels.faa.aircraft_type</groupId>
             <artifactId>FAA_AircraftType</artifactId>
             <version>0.1.0</version>
         </dependency>
         <dependency>
-            <groupId>com.daviddemartini.avtracker.faa_datamodel.category_code</groupId>
+            <groupId>com.daviddemartini.avtracker.datamodels.faa.category_code</groupId>
             <artifactId>FAA_CategoryCode</artifactId>
             <version>0.1.0</version>
         </dependency>
         <dependency>
-            <groupId>com.daviddemartini.avtracker.faa_datamodel.type_certification_code</groupId>
-            <artifactId>FAA_TypeCertificationCode</artifactId>
+            <groupId>com.daviddemartini.avtracker.datamodels.ig.aircraft_model</groupId>
+            <artifactId>AircraftModel</artifactId>
             <version>0.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.daviddemartini.avtracker.faa_datamodel.weight_class</groupId>
-            <artifactId>FAA_WeightClass</artifactId>
-            <version>0.1.0</version>
-        </dependency>
-
+	
     </dependencies>
 
     <profiles>
