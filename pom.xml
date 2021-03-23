@@ -18,6 +18,7 @@
     <modules>
       <module>MicroServices</module>
       <module>DataModels</module>
+      <module>ThirdParty</module>
     </modules>
 
     <dependencies>
